@@ -346,4 +346,8 @@ If this helped you, or if you built something cool with it, I'd love to hear abo
 
 ---
 
-*This file is self-consuming. Once setup completes, it no longer exists. All that remains is your BUILDING.md.*
+*This message will self-destruct in 5... 4... 3...*
+
+*Good luck on your mission. Should you or any member of your team be caught scrolling to the bottom of a setup file instead of building, the Secretary will disavow any knowledge of your actions.*
+
+*But seriously — if you read this far, you're my kind of person. Now go build something.*
