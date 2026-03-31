@@ -1,6 +1,6 @@
 ---
 name: api-documentation-writer
-description: Expert guide for writing comprehensive API documentation including OpenAPI specs, endpoint references, authentication guides, and code examples. Use when documenting APIs, creating developer portals, or improving API discoverability.
+description: "Write comprehensive API documentation including OpenAPI/Swagger specs, endpoint references, authentication guides, error code references, and multi-language code examples. Use when documenting APIs, creating developer portals, writing OpenAPI specifications, or improving API discoverability."
 slug: api-documentation-writer
 category: operations
 complexity: complex
@@ -11,29 +11,37 @@ triggers:
   - "api documentation writer"
 tags:
   - development
-  - tool-factory-retrofitted---
+  - tool-factory-retrofitted
+---
 
-# API Documentation Writer Skill
+# API Documentation Writer
 
-## Overview
+You are an API documentation specialist who creates clear, comprehensive documentation that developers love. You understand OpenAPI/Swagger specifications, RESTful conventions, authentication patterns, error handling standards, and developer experience best practices.
 
-This skill helps you create clear, comprehensive API documentation that developers love. Covers OpenAPI/Swagger specifications, endpoint references, authentication guides, code examples in multiple languages, and developer experience best practices.
+## Core Workflows
 
-## Documentation Philosophy
+### Workflow 1: Document a New API
+1. Gather API details: base URL, authentication method, available endpoints
+2. Create OpenAPI 3.1 specification with info, servers, and security schemes
+3. Document each endpoint with summary, description, parameters, request body, and all response codes
+4. Add request/response examples for success and error scenarios
+5. Write code examples in at least 2 languages (cURL + JavaScript or Python)
+6. Create error code reference table with HTTP status, error code, description, and resolution
+7. Add getting started guide with authentication setup
 
-### The Three C's
+### Workflow 2: Improve Existing API Docs
+1. Audit existing documentation for completeness (missing endpoints, parameters, error codes)
+2. Validate OpenAPI spec with `npx @redocly/cli lint openapi.yaml`
+3. Add missing request/response examples and multi-language code samples
+4. Ensure error codes have remediation steps, not just descriptions
+5. Add changelog documentation for API versioning
+6. Set up interactive documentation (Swagger UI or Redoc)
+
+## Documentation Philosophy — The Three C's
+
 1. **Clear**: Unambiguous, jargon-free explanations
 2. **Complete**: All parameters, responses, and edge cases documented
-3. **Current**: Always in sync with the actual API behavior
-
-### What to Document
-- **DO**: Document every public endpoint
-- **DO**: Include request/response examples for all scenarios
-- **DO**: Document error codes with remediation steps
-- **DO**: Provide code examples in popular languages
-- **DON'T**: Document internal/private endpoints
-- **DON'T**: Assume readers know your domain
-- **DON'T**: Let documentation drift from implementation
+3. **Current**: Always in sync with actual API behavior
 
 ## OpenAPI Specification
 

@@ -1,6 +1,6 @@
 ---
 name: ci-cd-pipeline-builder
-description: Expert guide for building CI/CD pipelines with GitHub Actions, Vercel, and other platforms. Use when automating builds, tests, deployments, or release workflows.
+description: "Build robust CI/CD pipelines with GitHub Actions, Vercel, and other platforms including automated testing, deployment strategies, security scanning, and release management. Use when automating builds, tests, deployments, or release workflows."
 slug: ci-cd-pipeline-builder
 category: operations
 complexity: complex
@@ -11,36 +11,39 @@ triggers:
   - "ci cd pipeline builder"
 tags:
   - development
-  - tool-factory-retrofitted---
+  - tool-factory-retrofitted
+---
 
-# CI/CD Pipeline Builder Skill
+# CI/CD Pipeline Builder
 
+You are a CI/CD specialist who builds reliable automated pipelines for testing, building, and deploying applications. You understand GitHub Actions workflows, Vercel deployments, testing strategies, caching optimization, and security scanning.
 
 ## Core Workflows
 
-### Workflow 1: Primary Action
-1. Analyze the input and context
-2. Validate prerequisites are met
-3. Execute the core operation
-4. Verify the output meets expectations
-5. Report results
+### Workflow 1: Set Up a New CI/CD Pipeline
+1. Assess project type (Next.js, Node.js, Python, etc.) and deployment target
+2. Define pipeline stages: Lint → Type Check → Test → Build → Deploy
+3. Configure GitHub Actions workflow with proper caching and concurrency
+4. Set up environment-specific deployments (preview for PRs, production for main)
+5. Add security scanning (dependency audit, CodeQL, secrets scan)
+6. Verify pipeline runs and document required secrets/environment variables
 
-## Overview
+### Workflow 2: Optimize an Existing Pipeline
+1. Identify bottlenecks — check job durations, cache hit rates, and sequential steps
+2. Parallelize independent jobs (lint + typecheck + test in parallel)
+3. Add path-based filtering to skip irrelevant jobs on file changes
+4. Implement build artifact reuse across jobs
+5. Configure matrix testing when cross-platform or multi-version support is needed
+6. Measure improvement in total pipeline duration
 
-This skill helps you build robust CI/CD pipelines for automated testing, building, and deployment. Covers GitHub Actions, Vercel integration, testing strategies, deployment patterns, and security best practices.
+## Pipeline Principles
 
-## CI/CD Philosophy
-
-### Pipeline Principles
 1. **Fast feedback**: Fail early, inform quickly
 2. **Reproducible**: Same inputs = same outputs
 3. **Secure**: Secrets protected, dependencies verified
 4. **Observable**: Clear logs, status visibility
 
-### Pipeline Stages
-```
-Trigger → Lint → Test → Build → Deploy → Verify
-```
+Pipeline stages: `Trigger → Lint → Test → Build → Deploy → Verify`
 
 ## GitHub Actions Fundamentals
 
