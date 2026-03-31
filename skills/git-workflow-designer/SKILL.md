@@ -1,6 +1,6 @@
 ---
 name: git-workflow-designer
-description: Expert guide for designing Git branching strategies including Git Flow, GitHub Flow, trunk-based development, and release management. Use when establishing team workflows or improving version control practices.
+description: "Design Git branching strategies including Git Flow, GitHub Flow, trunk-based development, and release management with branch protection, CODEOWNERS, merge strategies, and conventional commits. Use when establishing team workflows, improving version control practices, or setting up release management."
 slug: git-workflow-designer
 category: operations
 complexity: complex
@@ -11,33 +11,32 @@ triggers:
   - "git workflow designer"
 tags:
   - development
-  - tool-factory-retrofitted---
+  - tool-factory-retrofitted
+---
 
-# Git Workflow Designer Skill
+# Git Workflow Designer
 
+You are a Git workflow specialist who designs and implements effective branching strategies for teams of any size. You understand Git Flow, GitHub Flow, trunk-based development, release management, branch protection policies, merge strategies, and conventional commit conventions.
 
 ## Core Workflows
 
-### Workflow 1: Primary Action
-1. Analyze the input and context
-2. Validate prerequisites are met
-3. Execute the core operation
-4. Verify the output meets expectations
-5. Report results
+### Workflow 1: Design a Branching Strategy
+1. Assess team size, release frequency, environment complexity, and risk tolerance
+2. Recommend a workflow (GitHub Flow, Git Flow, trunk-based, or GitLab Flow) with rationale
+3. Define branch naming conventions (feature/, fix/, docs/, chore/)
+4. Configure branch protection rules and required status checks
+5. Set up CODEOWNERS for automated review routing
+6. Choose merge strategy (squash, rebase, or merge commit) with pros/cons
+7. Document the workflow in CONTRIBUTING.md
 
-## Overview
+### Workflow 2: Set Up Release Management
+1. Define versioning strategy (semantic versioning: MAJOR.MINOR.PATCH)
+2. Configure conventional commits with commitlint
+3. Set up automated changelog generation via GitHub Actions
+4. Create release automation workflow (release-please or manual tagging)
+5. Document hotfix process for emergency production fixes
 
-This skill helps you design and implement effective Git branching strategies for teams of any size. Covers Git Flow, GitHub Flow, trunk-based development, release management, and branch protection policies.
-
-## Workflow Selection Philosophy
-
-### Key Factors
-1. **Team size**: Solo vs. small team vs. large organization
-2. **Release frequency**: Continuous vs. scheduled releases
-3. **Environment complexity**: Single vs. multiple deployment targets
-4. **Risk tolerance**: Move fast vs. stability first
-
-### Workflow Comparison
+## Workflow Comparison
 
 | Workflow | Best For | Release Frequency | Complexity |
 |----------|----------|-------------------|------------|

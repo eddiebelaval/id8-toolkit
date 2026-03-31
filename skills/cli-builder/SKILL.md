@@ -1,6 +1,6 @@
 ---
 name: cli-builder
-description: Expert guide for building command-line interfaces with Node.js (Commander, Inquirer, Ora) or Python (Click, Typer, Rich). Use when creating CLI tools, terminal UX, argument parsing, or interactive prompts.
+description: "Build professional command-line interfaces with Node.js (Commander, Inquirer, Ora) or Python (Click, Typer, Rich) including argument parsing, interactive prompts, progress indicators, colored output, and cross-platform compatibility. Use when creating CLI tools, terminal UX, argument parsing, or interactive prompts."
 slug: cli-builder
 category: operations
 complexity: complex
@@ -11,40 +11,38 @@ triggers:
   - "cli builder"
 tags:
   - development
-  - tool-factory-retrofitted---
+  - tool-factory-retrofitted
+---
 
-# CLI Builder Skill
+# CLI Builder
 
+You are a CLI development specialist who builds professional command-line interfaces with excellent user experience. You understand argument parsing, interactive prompts, progress indicators, colored output, non-interactive mode handling, and cross-platform compatibility in both Node.js and Python ecosystems.
 
 ## Core Workflows
 
-### Workflow 1: Primary Action
-1. Analyze the input and context
-2. Validate prerequisites are met
-3. Execute the core operation
-4. Verify the output meets expectations
-5. Report results
+### Workflow 1: Build a New CLI Tool (Node.js)
+1. Scaffold project with package.json `bin` entry point and TypeScript support
+2. Set up Commander.js for command/subcommand structure with proper help text
+3. Add interactive prompts via Inquirer with non-interactive fallback (`--yes` flag)
+4. Implement progress indicators with Ora for long-running operations
+5. Add colored output with Chalk (respect `NO_COLOR` environment variable)
+6. Configure error handling with meaningful exit codes and stderr output
+7. Set up distribution (npm publish, bin configuration, engine requirements)
 
-## Overview
+### Workflow 2: Build a New CLI Tool (Python)
+1. Set up project with Typer or Click for command structure
+2. Add Rich for formatted output, tables, and progress indicators
+3. Implement argument validation with type hints and enum choices
+4. Add subcommand groups for related operations
+5. Handle configuration management and environment variables
+6. Package for distribution via PyPI
 
-This skill helps you build professional command-line interfaces with excellent user experience. Covers argument parsing, interactive prompts, progress indicators, colored output, and cross-platform compatibility.
+## CLI Design Principles
 
-## CLI Design Philosophy
-
-### Principles of Good CLI Design
-1. **Predictable**: Follow conventions users expect
-2. **Helpful**: Provide clear help text and error messages
-3. **Composable**: Work well with pipes and other tools
-4. **Forgiving**: Accept common variations in input
-
-### Design Guidelines
-- **DO**: Use conventional flag names (`-v`, `--verbose`, `-h`, `--help`)
-- **DO**: Provide meaningful exit codes
-- **DO**: Support `--version` and `--help` on all commands
-- **DO**: Use colors meaningfully (errors=red, success=green)
-- **DON'T**: Require interactive input when running in pipes
-- **DON'T**: Print to stdout when outputting errors
-- **DON'T**: Ignore signals (Ctrl+C should exit cleanly)
+1. **Predictable**: Follow conventions users expect (`-v`, `--verbose`, `-h`, `--help`)
+2. **Helpful**: Provide clear help text, meaningful exit codes, and actionable error messages
+3. **Composable**: Work well with pipes — detect TTY, suppress decorative output when piped
+4. **Forgiving**: Accept common input variations, handle Ctrl+C gracefully
 
 ## Node.js CLI Development
 
