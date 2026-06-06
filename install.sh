@@ -94,7 +94,7 @@ fi
 echo ""
 echo -e "${BOLD}Squire${RESET}"
 echo -e "${DIM}Agent operating system for AI-assisted development${RESET}"
-echo -e "${DIM}318 skills | 56 commands | 23 agents | 6 frameworks${RESET}"
+echo -e "${DIM}325 skills | 63 commands | 34 agents | 6 frameworks${RESET}"
 echo ""
 
 # -- Uninstall flow --

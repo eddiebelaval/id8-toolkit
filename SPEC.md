@@ -10,7 +10,7 @@ Last updated: 2026-03-18
 
 ## Overview
 
-Squire is a file-based toolkit that changes how AI coding agents behave. It ships as a collection of markdown files and shell scripts that you drop into your project or global config directory. The core artifact is `squire.md`, a behavioral ruleset that addresses the 9 most common failure patterns observed across 5 months of intensive AI-augmented development. Around that core sit 63 slash commands, 328 skills, 34 custom agents, an 11-stage build pipeline, 7 behavioral patterns, 6 thinking frameworks, the Triad documentation system, and workspace generators for file-based project organization.
+Squire is a file-based toolkit that changes how AI coding agents behave. It ships as a collection of markdown files and shell scripts that you drop into your project or global config directory. The core artifact is `squire.md`, a behavioral ruleset that addresses the 9 most common failure patterns observed across 5 months of intensive AI-augmented development. Around that core sit 63 slash commands, 325 skills, 34 custom agents, an 11-stage build pipeline, 2 behavioral patterns, 6 thinking frameworks, the Triad documentation system, and workspace generators for file-based project organization.
 
 ## Components
 
@@ -18,10 +18,10 @@ Squire is a file-based toolkit that changes how AI coding agents behave. It ship
 |-----------|-------|--------|----------|
 | Behavioral rules | 9 | Markdown | `squire.md`, `patterns/behavioral-rules.md` |
 | Slash commands | 63 | Markdown | `commands/` |
-| Skills | 328 | Markdown | `skills/` |
+| Skills | 325 | Markdown | `skills/` |
 | Custom agents | 34 | Markdown | `agents/` |
 | Pipeline stages | 11 | Markdown | `pipeline/` |
-| Behavioral patterns | 7 | Markdown | `patterns/` |
+| Behavioral patterns | 2 | Markdown | `patterns/` |
 | Thinking frameworks | 6 | Markdown | `prompts/` |
 | Triad templates | 3 | Markdown | `templates/` |
 | Doc templates | 6 | Markdown | `doc-templates/` |

@@ -37,7 +37,7 @@ Key commands by emergence order:
 
 ## Skills Library (Feb - Mar 2026)
 
-328 skills across 17 domains. Built by identifying every type of specialized work done across 12+ products and encoding domain expertise into prompt files. The skills cover engineering (frontend, backend, architecture, DevOps), business (marketing, finance, startup, operations), and creative (content, design, UX, writing) domains.
+325 skills across 17 domains. Built by identifying every type of specialized work done across 12+ products and encoding domain expertise into prompt files. The skills cover engineering (frontend, backend, architecture, DevOps), business (marketing, finance, startup, operations), and creative (content, design, UX, writing) domains.
 
 ## The Triad (Mar 2026)
 
@@ -55,7 +55,7 @@ The 11-stage build system was derived from shipping 12+ products through the sam
 | Commits analyzed | 3,307 |
 | Products shipped using these patterns | 12+ |
 | Duration | 5 months (Oct 2025 - Mar 2026) |
-| Skills built | 328 |
+| Skills built | 325 |
 | Slash commands | 63 |
 | Custom agents | 34 |
 

@@ -17,7 +17,7 @@ Make AI coding agents reliable, productive, and predictable by encoding the beha
    63 Claude Code commands covering the full development lifecycle: shipping (/ship), deployment (/deploy), research (/research), visualization (/visualize), planning (/blueprint), testing (/test), content publishing (/publish), and operations (/morning, /status). Each command is a detailed prompt file that instructs agents to use their built-in tools systematically.
 
 3. **Skills Library** -- REALIZED
-   328 specialized skills organized across 17 domains: frontend, backend, architecture, DevOps, AI/ML, SEO, CRO, content, marketing, financial, startup, operations, product management, design, UX, writing, and communication. Each skill provides domain expertise that agents lack by default.
+   325 specialized skills organized across 17 domains: frontend, backend, architecture, DevOps, AI/ML, SEO, CRO, content, marketing, financial, startup, operations, product management, design, UX, writing, and communication. Each skill provides domain expertise that agents lack by default.
 
 4. **Custom Agents** -- REALIZED
    34 agents with tool access for architecture, security, DevOps, payment processing, database migrations, MCP servers, social media, market intelligence, and more. These are executable specialists, not static prompts.
