@@ -2,7 +2,7 @@
 
 > How the most complete Claude Code toolkit was built, one friction pattern at a time.
 
-Last updated: 2026-03-18
+Last updated: 2026-07-08
 
 ---
 
@@ -58,6 +58,47 @@ The 11-stage build system was derived from shipping 12+ products through the sam
 | Skills built | 328 |
 | Slash commands | 63 |
 | Custom agents | 34 |
+
+## Community & Distribution Layer (Jul 2026)
+
+The Community & Distribution pillar read as "partially shipped" for a non-obvious reason:
+the community infrastructure had been **built but never merged to the default branch**. A
+prior heal session (Mar 2026) authored `CONTRIBUTING.md`, the GitHub issue templates, and
+the PR template on a heal branch, but that branch was never merged — so `main`, the branch
+every external contributor sees, still had none of it. The gap was branch topology, not
+missing work.
+
+This heal session did two things:
+
+1. **Rescued the orphaned work.** Brought `CONTRIBUTING.md`, the three issue templates
+   (bug report, feature request, skill submission), and the PR template onto the default
+   branch so they finally reach contributors.
+
+2. **Completed the file-based community layer** — the parts genuinely still missing, built
+   the Squire way (files, not infrastructure, honoring the no-server/no-telemetry
+   anti-vision):
+   - **`GOVERNANCE.md`** — closes the "no formal governance body" gap with an honest
+     benevolent-maintainer model, decision process, and the principles that constrain
+     governance (the anti-vision is not negotiable per-PR).
+   - **`CODE_OF_CONDUCT.md`** — extracted and expanded from the inline section in
+     `CONTRIBUTING.md` into a recognized standalone file.
+   - **`SUPPORT.md`** — closes the "community forum" gap by establishing GitHub Discussions
+     as the community channel: the file-based project's file-based forum, no Discord to
+     host or moderate.
+   - **`DISTRIBUTION.md`** — closes the "no adoption metrics beyond stars" gap by defining
+     the no-telemetry, GitHub-native signals adoption is actually read from (forks,
+     dependency graph, traffic, Discussions and contributor activity). Telemetry was never
+     an option — it violates the anti-vision — so the fix is to define what *is* measured.
+   - **`CHANGELOG.md`** — distribution/versioning hygiene; a release is a tagged commit
+     plus a changelog entry, no build artifact.
+   - **`.github/ISSUE_TEMPLATE/config.yml`** — routes questions to Discussions and points
+     contributors at the support and contributing docs.
+
+**Why not "REALIZED"?** Two documented gaps remain by design, not by omission: no dedicated
+Discord (Discussions is the deliberate file-based substitute) and no live adoption
+dashboard (adoption is read from public GitHub signals, never tracked telemetry). For a
+files-over-infrastructure product, the file-based layer *is* the realization — so the
+pillar advanced from PARTIAL 55% to PARTIAL 80% rather than to REALIZED.
 
 ## Migration from claude-code-visualize
 
