@@ -1,10 +1,10 @@
 ---
 name: PDF Generator
 slug: pdf-generator
-description: Create and manipulate professional PDF documents with formatting, images, and metadata
+description: Create professional PDF documents by generating polished HTML and converting to PDF
 category: document-creation
 complexity: complex
-version: "1.0.0"
+version: "2.0.0"
 author: "ID8Labs"
 triggers:
   - "create pdf"
@@ -21,266 +21,280 @@ tags:
 
 # PDF Generator
 
-The PDF Generator skill enables creation of professional PDF documents from various sources including Markdown, HTML, plain text, and structured data. It handles formatting, images, metadata, watermarks, and multi-page layouts. This skill leverages Node.js libraries like `puppeteer`, `pdfkit`, or `jsPDF` for comprehensive PDF generation capabilities.
+Create professional PDF documents. The workflow is HTML-first: generate a beautifully styled, self-contained HTML file, then convert to PDF when the user specifically needs .pdf format.
 
-Whether you need to convert documentation to PDF, generate reports with charts, create printable forms, or produce client deliverables, this skill provides the tools and workflows to create publication-quality PDFs programmatically.
+**Reference the `document-design-foundation` skill for the base template, CSS system, and component library.**
 
-## Core Workflows
+## How This Works
 
-### Workflow 1: Convert Markdown to PDF
-**Purpose:** Transform Markdown files into formatted PDF documents with styling
+```
+User: "create a PDF of our Q1 results"
+                |
+                v
+  1. Write a styled HTML file using the design foundation template
+  2. Fill in real content (not placeholder text)
+  3. Save as .html to the appropriate location
+  4. Convert to .pdf via puppeteer one-liner
+  5. Tell the user where both files are
+```
 
-**Steps:**
-1. Read the source Markdown file
-2. Parse Markdown to HTML using a library like `marked`
-3. Apply CSS styling for professional appearance
-4. Use Puppeteer to render HTML as PDF with proper page breaks
-5. Add metadata (title, author, creation date)
-6. Save to specified output path
+**You generate the document directly. You do NOT write a program that generates it.**
 
-**Implementation:**
-```javascript
+## When to Use This Skill
+
+| User Says | What to Do |
+|---|---|
+| "create a PDF" | Generate HTML + convert to PDF |
+| "make a PDF from this data" | Generate HTML with data formatted as tables/cards + convert |
+| "convert this markdown to PDF" | Read the .md, wrap in design foundation template, convert |
+| "generate a report as PDF" | Use the Report Builder skill (it references this for PDF conversion) |
+| "create a document" | Generate HTML only (PDF conversion optional) |
+
+## Step-by-Step Workflow
+
+### Step 1: Determine Content
+
+Ask yourself:
+- What is the document about? (title, subject matter)
+- Who is the audience? (executive, technical, client, internal)
+- What sections does it need?
+- Is there data to display? (tables, metrics, charts)
+
+If the user provided content, use it directly. If they described what they want, write the content yourself.
+
+### Step 2: Generate the HTML File
+
+Use the design foundation template from `document-design-foundation`. The document should be:
+
+- **Self-contained.** All CSS inline in `<style>`. No external dependencies.
+- **Print-ready.** The `@media print` styles from the foundation handle this.
+- **Content-complete.** Real text, real numbers, real structure. No "Lorem ipsum."
+
+#### Document Structure Patterns
+
+**Simple Document (letter, memo, one-pager):**
+```html
+<div class="document">
+  <div class="cover">
+    <h1>Document Title</h1>
+    <p class="subtitle">Context or recipient</p>
+    <div class="meta-row">
+      <span>Author</span>
+      <span>Date</span>
+    </div>
+  </div>
+  <div class="document-body">
+    <!-- Content sections -->
+  </div>
+  <div class="document-footer">
+    <span>Organization</span>
+    <span>Page info</span>
+  </div>
+</div>
+```
+
+**Data-Heavy Document (report, analysis):**
+```html
+<div class="document">
+  <div class="cover">...</div>
+  <div class="document-body">
+    <p class="lead">Executive summary in 2-3 sentences.</p>
+
+    <div class="kpi-grid">
+      <!-- KPI cards from foundation -->
+    </div>
+
+    <h2>Section Title</h2>
+    <p>Analysis text...</p>
+    <table>
+      <!-- Data table from foundation -->
+    </table>
+
+    <div class="callout info">
+      <div class="callout-title">Key Finding</div>
+      <p>Important insight highlighted here.</p>
+    </div>
+  </div>
+</div>
+```
+
+**Multi-Section Document (proposal, plan, case study):**
+```html
+<div class="document">
+  <div class="cover">...</div>
+  <div class="document-body">
+    <p class="lead">Summary paragraph.</p>
+
+    <h2>1. Background</h2>
+    <p>Context and problem statement...</p>
+
+    <h2>2. Approach</h2>
+    <p>What we propose...</p>
+
+    <h2>3. Timeline</h2>
+    <table><!-- milestones --></table>
+
+    <h2>4. Investment</h2>
+    <div class="kpi-grid"><!-- cost cards --></div>
+
+    <h2>5. Next Steps</h2>
+    <ol><!-- action items --></ol>
+  </div>
+</div>
+```
+
+### Step 3: Save the HTML
+
+```
+Project context:  ./{type}-{subject}.html  or  ./docs/{type}-{subject}.html
+No project:       ~/Development/artifacts/{topic}/{type}-{subject}-{date}.html
+```
+
+### Step 4: Convert to PDF
+
+Run this as a one-shot node command. Do NOT create a project or install dependencies globally.
+
+```bash
+# Check if puppeteer is available
+node -e "require('puppeteer')" 2>/dev/null || npm install -g puppeteer
+
+# Convert
+node -e "
 const puppeteer = require('puppeteer');
-const marked = require('marked');
-const fs = require('fs');
-
-async function markdownToPdf(mdPath, outputPath, options = {}) {
-  const markdown = fs.readFileSync(mdPath, 'utf8');
-  const html = marked.parse(markdown);
-
-  const styledHtml = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <style>
-        body { font-family: 'Helvetica', sans-serif; margin: 40px; line-height: 1.6; }
-        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        h2 { color: #34495e; margin-top: 30px; }
-        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
-        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
-        blockquote { border-left: 4px solid #3498db; padding-left: 20px; color: #7f8c8d; }
-      </style>
-    </head>
-    <body>${html}</body>
-    </html>
-  `;
-
-  const browser = await puppeteer.launch();
+(async () => {
+  const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
-  await page.setContent(styledHtml);
+  await page.goto('file://ABSOLUTE_HTML_PATH', { waitUntil: 'networkidle0' });
   await page.pdf({
-    path: outputPath,
+    path: 'ABSOLUTE_PDF_PATH',
     format: 'A4',
-    margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' },
     printBackground: true,
-    ...options
+    margin: { top: '0', right: '0', bottom: '0', left: '0' }
   });
   await browser.close();
-}
+  console.log('PDF saved to ABSOLUTE_PDF_PATH');
+})();
+"
 ```
 
-### Workflow 2: Generate Multi-Page PDF Report
-**Purpose:** Create structured reports with headers, footers, page numbers, and sections
+**Important:** Use absolute paths. Replace `ABSOLUTE_HTML_PATH` and `ABSOLUTE_PDF_PATH` with real paths.
 
-**Steps:**
-1. Define report structure (cover page, TOC, sections, appendix)
-2. Create PDFKit document instance
-3. Add cover page with title, logo, date
-4. Generate table of contents with page references
-5. Add sections with consistent formatting
-6. Include headers and footers on each page
-7. Add page numbers and finalize
+### Step 5: Report to User
 
-**Implementation:**
-```javascript
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
+Tell the user:
+- Where the HTML file is (they can open it in a browser to preview)
+- Where the PDF file is (if they requested PDF)
+- Offer to make adjustments
 
-function generateReport(data, outputPath) {
-  const doc = new PDFDocument({
-    size: 'A4',
-    margins: { top: 50, bottom: 50, left: 50, right: 50 }
-  });
+## Markdown to PDF Conversion
 
-  const stream = fs.createWriteStream(outputPath);
-  doc.pipe(stream);
+When converting existing markdown files:
 
-  // Cover page
-  doc.fontSize(28)
-     .text(data.title, { align: 'center' })
-     .moveDown(2)
-     .fontSize(14)
-     .text(`Generated: ${new Date().toLocaleDateString()}`, { align: 'center' });
+1. Read the markdown file content
+2. Wrap it in the design foundation HTML template
+3. Convert markdown formatting to HTML:
+   - `# Heading` -> `<h1>`
+   - `**bold**` -> `<strong>`
+   - `- item` -> `<ul><li>`
+   - Tables -> `<table>` with foundation styling
+   - Code blocks -> `<pre><code>` with monospace font
+4. Save as HTML
+5. Convert to PDF
 
-  doc.addPage();
+**Do NOT use a markdown-to-HTML library.** You can parse markdown yourself for the common patterns. This keeps the output clean and styled consistently with the design foundation.
 
-  // Table of contents
-  doc.fontSize(20).text('Table of Contents', { underline: true });
-  doc.moveDown();
-  data.sections.forEach((section, idx) => {
-    doc.fontSize(12)
-       .fillColor('blue')
-       .text(`${idx + 1}. ${section.title}`, { link: `#section${idx}` })
-       .fillColor('black');
-  });
+## Content Quality Checklist
 
-  // Sections
-  data.sections.forEach((section, idx) => {
-    doc.addPage();
-    doc.fontSize(18)
-       .fillColor('black')
-       .text(section.title, { destination: `section${idx}` });
-    doc.moveDown();
-    doc.fontSize(11).text(section.content, { align: 'justify' });
-  });
+Before saving the document, verify:
 
-  // Add page numbers
-  const pages = doc.bufferedPageRange();
-  for (let i = 0; i < pages.count; i++) {
-    doc.switchToPage(i);
-    doc.fontSize(10)
-       .text(`Page ${i + 1} of ${pages.count}`,
-             50, doc.page.height - 50,
-             { align: 'center' });
+- [ ] Title is specific and descriptive (not "Report" or "Document")
+- [ ] Date is included and accurate
+- [ ] All sections have real content (no placeholders)
+- [ ] Numbers are formatted (currency, percentages, dates)
+- [ ] Tables have proper headers
+- [ ] Document has a clear conclusion or next steps section
+- [ ] Spelling and grammar are correct
+- [ ] The document reads well from top to bottom (logical flow)
+
+## Advanced Patterns
+
+### Adding Charts
+
+For simple charts, use inline SVG:
+
+```html
+<!-- Bar chart as SVG -->
+<svg viewBox="0 0 400 200" style="width:100%;max-width:500px;margin:1rem 0">
+  <rect x="20" y="40" width="60" height="140" fill="#0f3460" rx="4"/>
+  <rect x="100" y="80" width="60" height="100" fill="#0f3460" rx="4"/>
+  <rect x="180" y="20" width="60" height="160" fill="#0f3460" rx="4"/>
+  <rect x="260" y="60" width="60" height="120" fill="#0f3460" rx="4"/>
+  <!-- Labels -->
+  <text x="50" y="195" text-anchor="middle" font-size="12" fill="#525252">Q1</text>
+  <text x="130" y="195" text-anchor="middle" font-size="12" fill="#525252">Q2</text>
+  <text x="210" y="195" text-anchor="middle" font-size="12" fill="#525252">Q3</text>
+  <text x="290" y="195" text-anchor="middle" font-size="12" fill="#525252">Q4</text>
+</svg>
+```
+
+For interactive charts (HTML-only, not PDF), include Chart.js via CDN:
+```html
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+```
+
+### Multi-Page Documents
+
+For documents that span multiple printed pages, add page break hints:
+
+```html
+<div style="page-break-before: always;"></div>
+```
+
+Place these before major `<h2>` sections in long documents.
+
+### Cover Page as Full Page
+
+For formal documents that need a standalone cover page:
+
+```css
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+@media print {
+  .cover {
+    min-height: auto;
+    page-break-after: always;
   }
-
-  doc.end();
 }
 ```
 
-### Workflow 3: Batch Convert HTML to PDF
-**Purpose:** Convert multiple HTML files to PDFs in a single operation
+### Watermark
 
-**Steps:**
-1. Scan directory for HTML files or accept file list
-2. Set up Puppeteer browser instance (reuse for efficiency)
-3. For each HTML file:
-   - Load HTML content
-   - Apply standard styling
-   - Render to PDF with consistent settings
-   - Save with corresponding filename
-4. Close browser and report results
-
-### Workflow 4: Add Watermark to Existing PDF
-**Purpose:** Apply text or image watermarks to PDF documents
-
-**Steps:**
-1. Load existing PDF using pdf-lib
-2. Get all pages
-3. For each page:
-   - Draw watermark text (diagonal, semi-transparent)
-   - OR overlay watermark image
-4. Save modified PDF
-5. Preserve original metadata
-
-**Implementation:**
-```javascript
-const { PDFDocument, rgb, degrees } = require('pdf-lib');
-const fs = require('fs');
-
-async function addWatermark(inputPath, outputPath, watermarkText) {
-  const existingPdfBytes = fs.readFileSync(inputPath);
-  const pdfDoc = await PDFDocument.load(existingPdfBytes);
-  const pages = pdfDoc.getPages();
-
-  pages.forEach(page => {
-    const { width, height } = page.getSize();
-    page.drawText(watermarkText, {
-      x: width / 2 - 100,
-      y: height / 2,
-      size: 48,
-      color: rgb(0.75, 0.75, 0.75),
-      opacity: 0.3,
-      rotate: degrees(-45)
-    });
-  });
-
-  const pdfBytes = await pdfDoc.save();
-  fs.writeFileSync(outputPath, pdfBytes);
+```css
+.document-body::before {
+  content: "DRAFT";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 8rem;
+  color: rgba(0, 0, 0, 0.04);
+  pointer-events: none;
+  z-index: 0;
 }
 ```
 
-### Workflow 5: Merge Multiple PDFs
-**Purpose:** Combine multiple PDF documents into a single file
+## What NOT to Do
 
-**Steps:**
-1. Create new PDF document
-2. Load each source PDF
-3. Copy all pages from each source
-4. Append to new document
-5. Save merged PDF with combined metadata
-
-## Quick Reference
-
-| Action | Command/Trigger |
-|--------|-----------------|
-| Convert Markdown to PDF | "convert [file.md] to pdf" |
-| Generate report from data | "create pdf report from [data]" |
-| Batch convert HTML | "convert all html files to pdf" |
-| Add watermark | "add watermark [text] to [file.pdf]" |
-| Merge PDFs | "merge [file1.pdf] and [file2.pdf]" |
-| Extract pages | "extract pages 1-5 from [file.pdf]" |
-| Compress PDF | "compress [file.pdf]" |
-| Add metadata | "set pdf metadata for [file.pdf]" |
-
-## Best Practices
-
-- **Page Sizing:** Always specify format ('A4', 'Letter') and orientation for consistency
-- **Margins:** Use minimum 15mm margins for printability
-- **Fonts:** Embed fonts or use standard PDF fonts (Helvetica, Times, Courier) for compatibility
-- **Images:** Compress images before embedding to reduce file size
-- **File Size:** Monitor PDF size; use compression for files over 5MB
-- **Accessibility:** Include document structure tags for screen readers when possible
-- **Metadata:** Always set title, author, and creation date metadata
-- **Page Breaks:** Use CSS `page-break-before` or `page-break-after` for controlled pagination
-- **Testing:** Test PDFs in multiple viewers (Adobe, Preview, browsers)
-- **Security:** Offer password protection and permission settings for sensitive documents
-- **Validation:** Verify PDF/A compliance if archival quality is required
-- **Batch Operations:** Reuse browser instances when converting multiple files
-
-## Common Patterns
-
-**Documentation Export:**
-```javascript
-// Convert project README to PDF with styling
-await markdownToPdf('./README.md', './docs/README.pdf', {
-  headerTemplate: '<div style="font-size:10px; text-align:center;">Project Documentation</div>',
-  footerTemplate: '<div style="font-size:10px; text-align:center;">Page <span class="pageNumber"></span></div>',
-  displayHeaderFooter: true
-});
-```
-
-**Invoice Generation:**
-```javascript
-// Create PDF invoice from template
-const doc = new PDFDocument();
-doc.pipe(fs.createWriteStream('invoice.pdf'));
-doc.fontSize(20).text('INVOICE', { align: 'center' });
-doc.fontSize(12).text(`Invoice #: ${invoiceNumber}`);
-doc.text(`Date: ${date}`);
-// ... add line items, totals, etc.
-doc.end();
-```
-
-## Dependencies
-
-Install required packages:
-```bash
-npm install puppeteer pdfkit pdf-lib marked
-```
-
-## Error Handling
-
-- **File Not Found:** Verify source file paths before processing
-- **Memory Issues:** For large PDFs, use streaming and chunk processing
-- **Font Errors:** Fallback to standard fonts if custom fonts fail to load
-- **Rendering Timeout:** Increase Puppeteer timeout for complex pages
-- **Permissions:** Handle read/write permission errors gracefully
-
-## Performance Tips
-
-- Reuse Puppeteer browser instances for batch operations
-- Use PDF compression for files with many images
-- Cache rendered HTML for repeated conversions
-- Process large PDFs page-by-page rather than loading entirely into memory
-- Use worker threads for parallel PDF generation
+- Do NOT scaffold a Node.js project with package.json
+- Do NOT write a "document generator" class or module
+- Do NOT use placeholder text or sample data (unless explicitly asked for a template)
+- Do NOT install pdfkit, jsPDF, or other PDF libraries (puppeteer converts HTML to PDF perfectly)
+- Do NOT create multiple files for one document (one HTML file = one document)
+- Do NOT ask the user to run a script (you run it yourself via Bash tool)

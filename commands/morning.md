@@ -24,6 +24,14 @@ Read `~/.claude/projects/-Users-eddiebelaval-Development/memory/session-log.md` 
 - What was worked on yesterday
 - Any unfinished tasks or blockers
 
+### 1b. Warden Posture (Sentinel Swarm)
+
+Read `~/.claude/argus-fortress/POSTURE.md` — the overnight Sentinel Swarm verdict.
+- **GREEN**: one line, "Fortress GREEN", move on.
+- **YELLOW**: surface the single ranked finding near the top of the brief.
+- **RED**: lead with it — Eddie was already pinged, but it heads the brief.
+If the file is missing or its date is not today, note "Warden swarm did not report" (do not fabricate a posture).
+
 ### 2. Cross-Project Git Status
 
 Check each active project for uncommitted work and open PRs:
@@ -103,7 +111,102 @@ If any project has >5 commits since last reconciliation, use AskUserQuestion:
 
 Known triangle projects: Parallax (`~/Development/id8/products/parallax`), Homer (`~/Development/Homer`), Rune (`~/Development/id8/products/rune`)
 
-### 7. Present Morning Brief
+### 7. Upstream Contributions Check
+
+Quick check on open source contribution activity:
+- Read `~/Development/upstream-contributions/TRACKER.md`
+- Check for responses on filed issues (use `gh` CLI to check issue status)
+- If it's Friday: flag any Bug Journal entries from the week that need investigation
+- If unverified bugs have been logged for >3 days, remind to investigate or discard
+
+```bash
+# Check Lightpanda issue responses
+gh issue view 1800 --repo lightpanda-io/browser --json state,comments 2>/dev/null
+gh issue view 1801 --repo lightpanda-io/browser --json state,comments 2>/dev/null
+gh issue view 1802 --repo lightpanda-io/browser --json state,comments 2>/dev/null
+```
+
+Report inline:
+```
+UPSTREAM
+- [Repo]: [N] issues filed, [status of responses]
+- Bug journal: [N] unverified entries
+```
+
+### 8. Life Triad Health Check
+
+Check the life triangle at `~/life/` for staleness and alignment.
+
+#### Auto-Scan
+
+```bash
+# Check last-updated dates in all life files
+for f in HEADING NOW GOALS MONEY PEOPLE BODY RHYTHM; do
+  echo "=== $f ===" && grep -i "last updated" ~/life/$f.md 2>/dev/null || echo "no date found"
+done
+```
+
+Staleness thresholds:
+- NOW.md: >3 days = flag
+- GOALS.md: >7 days = flag (weekly section must match current week)
+- MONEY.md, PEOPLE.md, BODY.md: >14 days = flag
+- HEADING.md, RHYTHM.md: >30 days = flag
+
+#### Goal Deadline Check
+
+Parse GOALS.md "This Week" section. If the date range doesn't include today, flag as stale.
+Check "This Month" goals -- if it's the last week of the month, flag for review.
+
+#### Auto-Update NOW.md Observable Fields
+
+Read recent git activity across active repos (last 24h) and session-log.md.
+If NOW.md Work section is >3 days stale, auto-update the observable fields:
+- Session count (approximate from logs)
+- Last active projects
+- Do NOT touch: mental state, relationships, health, revenue
+
+Update the "Last updated" date in NOW.md if auto-updates were made.
+
+#### Life Alignment Report
+
+```
+LIFE ALIGNMENT
+- HEADING: [CURRENT / N days since update]
+- NOW: [CURRENT / auto-updated today / N days stale]
+- GOALS: [This Week current / stale -- needs refresh]
+- MONEY/PEOPLE/BODY: [CURRENT / N days stale]
+```
+
+#### Life Delta Report
+
+Read `~/life/DELTA.md`. If it exists and is <7 days old, include in the brief:
+
+```
+LIFE DELTA: [NET STATUS] (computed [date])
+- Top commitments: [top 2 from this week's actions]
+- Diverging: [any dimensions flagged as diverging, or "none"]
+```
+
+Also query `life_commitments` from hydra.db for the current week:
+```bash
+sqlite3 ~/.hydra/hydra.db "SELECT dimension, commitment, score FROM life_commitments WHERE week = '$(date +%G-W%V)' ORDER BY dimension;"
+```
+
+If mid-week or later, show scored vs pending counts.
+
+If any file exceeds its staleness threshold, use AskUserQuestion:
+- "[FILE] hasn't been touched in [N] days. Quick update?"
+- Options: "Update now" / "Skip" / "Nothing changed, bump date"
+
+If it's Friday, prompt for weekly GOALS review:
+- "It's Friday. Want to review This Week goals and set next week?"
+- Options: "Yes" / "Skip this week"
+
+If it's the 1st of the month (or first /morning of the month), prompt for monthly review:
+- "New month. Full life reconcile?"
+- Options: "Full review" / "Just goals" / "Skip"
+
+### 9. Present Morning Brief
 
 Format the output as a concise brief:
 
@@ -130,6 +233,10 @@ INFRASTRUCTURE
 
 DEADLINES
 - [Any upcoming deadlines within 30 days]
+
+LIFE DELTA: [NET STATUS] (computed [date])
+- [Top 2 commitments for the week]
+- Diverging: [dimensions or "none"]
 
 RECOMMENDED FOCUS
 Based on priorities and momentum: [recommendation]

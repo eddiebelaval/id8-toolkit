@@ -2,17 +2,7 @@
 name: ralph
 description: Autonomous AI building loops for long-running projects. Use /ralph <task> for hybrid mode (checkpoints) or /ralph --mode=auto <task> for full autonomy. Designed for overnight builds and multi-hour sessions.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task
-slug: ralph-loops
-category: operations
-complexity: complex
-version: "1.0.0"
-author: "id8Labs"
-triggers:
-  - "ralph-loops"
-  - "ralph loops"
-tags:
-  - development
-  - tool-factory-retrofitted---
+---
 
 # Ralph Loops - Autonomous AI Building Skill
 
@@ -96,16 +86,6 @@ completion_signal: null            # Set to "RALPH_DONE" when complete
 checkpoint_interval: 10
 next_checkpoint: 10
 checkpoints_cleared: []
-
-
-## Core Workflows
-
-### Workflow 1: Primary Action
-1. Analyze the input and context
-2. Validate prerequisites are met
-3. Execute the core operation
-4. Verify the output meets expectations
-5. Report results
 
 # Error tracking
 consecutive_errors: 0

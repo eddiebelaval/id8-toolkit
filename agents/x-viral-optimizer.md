@@ -1,6 +1,6 @@
 ---
 name: x-viral-optimizer
-description: Use this agent when you need to optimize content for maximum viral potential on X (Twitter). Examples include: when you have a draft post that needs algorithmic optimization, when launching a product and want maximum organic reach, when your content isn't performing well and needs strategic refinement, or when you want to proactively optimize any X content before posting. Example scenarios: <example>Context: User has written a product announcement post that needs optimization for viral reach. user: 'I wrote this post for our new app launch: Check out our revolutionary productivity app! Download now: [link] #productivity #apps' assistant: 'Let me use the x-viral-optimizer agent to analyze and optimize this post for maximum viral potential on X.'</example> <example>Context: User wants to optimize a thought leadership post. user: 'Here's my post about remote work trends. Can you help make it more likely to go viral?' assistant: 'I'll use the x-viral-optimizer agent to evaluate your remote work post and provide iterative improvements for maximum engagement and reach.'</example>
+description: X (Twitter) viral content optimizer. Analyzes draft posts via 2025 algorithm scoring (Quotes×5+Bookmarks×4+Replies×3+Retweets×2+Likes×1) and rewrites iteratively to maximize organic reach.
 model: opus
 color: orange
 ---

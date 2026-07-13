@@ -149,7 +149,7 @@ Check the toggle works and theme changes
 ### Quick Reference
 Open the cheatsheet:
 ```bash
-cat ~/.claude/commands/cheatsheet.md
+cat ~/.claude/commands/CHEATSHEET.md
 ```
 
 ### Detailed Guide

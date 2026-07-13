@@ -17,15 +17,7 @@ You are helping ship a completed feature. Follow these steps:
    - Create a meaningful commit message
    - Follow format: "feat: [description]"
 
-4. **Triad Check** (if project has VISION.md + SPEC.md)
-   - Scan the diff for new routes, pages, components, API endpoints
-   - Cross-reference with SPEC.md capabilities
-   - If new capabilities not in SPEC: use AskUserQuestion to confirm adding them
-   - If changes touch a VISION pillar: ask if pillar status should change
-   - Update SPEC.md and/or VISION.md before creating PR
-   - Reference: `~/.claude/skills/triad-derive/AUTOMATION.md`
-
-5. **Push & Create PR**
+4. **Push & Create PR**
    - Push branch to remote
    - Create PR with clear description
    - Include test plan and screenshots if applicable
@@ -34,9 +26,5 @@ You are helping ship a completed feature. Follow these steps:
    - Provide PR URL
    - Summarize what's ready to review
    - Note any follow-up items
-
-6. **Monitor Deploy** (if Vercel project)
-   - After PR is created or push lands, suggest: `/loop 30s /deploy-watch`
-   - Or set up a Cron watch: `CronCreate` with `/deploy-watch` every 2 min for background monitoring
 
 **Important**: Only proceed if all checks pass. If anything fails, fix it first before creating the PR.

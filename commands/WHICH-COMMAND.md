@@ -79,49 +79,6 @@ Example:
 
 ---
 
-## Quality & Verification Commands
-
-```
-          What do you need to check?
-                     │
-    ┌────────────────┼────────────────┐
-    │                │                │
- "Just finished   "About to       "Deep cleanup
-  coding"          create a PR"    between features"
-    │                │                │
-    ▼                ▼                ▼
-  /polish          /verify          /cleanup
-    │                │                │
-    │                │                │
-    ▼                ▼                ▼
- Auto review +   6-layer audit    Dead code,
- auto simplify   (types, lint,    unused files,
- in one pass     tests, build)    config issues
-```
-
-### Quick Decision Tree
-
-| Situation | Command | Why |
-|-----------|---------|-----|
-| "Just finished coding" | `/polish` | Auto-reviews AND auto-fixes in one pass |
-| "About to create a PR" | `/verify` | Deep 6-layer audit before shipping |
-| "Quick sanity check" | `/test-verify quick` | Types + lint only, 30 seconds |
-| "Testing in browser" | `/test` | Manual browser testing via Playwright |
-| "Deep cleanup between features" | `/cleanup` | Remove dead code, organize files, fix config |
-| "Reviewing Codex output" | `/review-codex` | Director/Builder review with auto-fix loop |
-| "Run full test suite" | `/test-verify all` | Unit + E2E + build in sequence |
-
-### The Differences That Matter
-
-- **`/polish`** = "Make my code better." Two agents (reviewer + simplifier) that auto-apply changes. Use after coding, before committing.
-- **`/verify`** = "Is my code correct?" Read-only audit across 6 layers. Use before PRs when you need confidence, not changes.
-- **`/test-verify`** = "Do the tests pass?" Runs actual test commands (types, lint, unit, E2E, build). Concrete pass/fail.
-- **`/cleanup`** = "Is my project tidy?" Maintenance sweep for dead code, orphaned files, outdated config. Use between features.
-- **`/test`** = "Does it work visually?" Opens a browser and interactively tests. Use for UI verification.
-- **`/review-codex`** = "Is the Builder's work good?" Specialized review for Codex-generated code.
-
----
-
 ## Complete Decision Matrix
 
 | Situation | Command | Why |

@@ -1,33 +1,36 @@
 ---
 name: remotion-best-practices
-description: Best practices for Remotion - Video creation in React
+description: Best practices for Remotion 4.0.436+ — Video creation in React
 metadata:
-  tags: remotion, video, react, animation, composition
+  tags: remotion, video, react, animation, composition, mediabunny
 slug: remotion
 category: operations
 complexity: complex
-version: "1.0.0"
+version: "2.0.0"
 author: "id8Labs"
+remotion_version: "4.0.436"
 triggers:
-  - "remotion"
   - "remotion"
 tags:
   - development
-  - tool-factory-retrofitted---
+  - tool-factory-retrofitted
+---
 
+## Version Notes (4.0.436)
 
-## Core Workflows
-
-### Workflow 1: Primary Action
-1. Analyze the input and context
-2. Validate prerequisites are met
-3. Execute the core operation
-4. Verify the output meets expectations
-5. Report results
+- **Mediabunny** replaces deprecated `@remotion/media-parser` and `@remotion/webcodecs` (since 4.0.415). Mediabunny is a separate library (MPL 2.0) endorsed by Remotion.
+- **New packages:** `@remotion/light-leaks` (4.0.415), `@remotion/starburst` (4.0.435) — visual effects.
+- **New component:** `<TransitionSeries.Overlay>` — overlay transitions without reducing total duration.
+- **Licensing:** `apiKey` renamed to `licenseKey` in `@remotion/licensing`.
+- **Renderer:** Chrome 144, Lambda uses Node.js 24. `fps`/`durationInFrames` overridable at render time.
+- **Tailwind:** `@remotion/tailwind-v4` upgraded to TailwindCSS 4.2.0 with `@tailwindcss/webpack`.
+- **Studio:** Search bar, timeline fixes, better filesystem protection.
+- **Rendering:** `os.availableParallelism()` preferred over `os.cpus().length`. Render progress estimations in web renderer.
+- **Sequences:** Will auto-premount from Remotion 5.0 (prep landed in 4.0.425).
 
 ## When to use
 
-Use this skills whenever you are dealing with Remotion code to obtain the domain-specific knowledge.
+Use this skill whenever you are dealing with Remotion code to obtain the domain-specific knowledge.
 
 ## How to use
 

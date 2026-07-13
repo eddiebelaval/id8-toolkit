@@ -1,6 +1,6 @@
 ---
 name: nextjs-senior-dev
-description: Use this agent for Next.js 14+ App Router development requiring senior-level expertise. Handles architecture decisions, performance optimization, complex patterns, debugging production issues, and implementing enterprise-grade features. Use when building features that need deep Next.js knowledge, reviewing code for best practices, or solving complex routing/rendering issues. Example scenarios: <example>Context: User needs to implement a complex multi-tenant SaaS feature. user: 'I need to add team-based workspaces with per-team billing and subdomain routing' assistant: 'Let me bring in the nextjs-senior-dev agent to architect this properly with Next.js middleware and parallel routes.'</example> <example>Context: User is debugging hydration errors in production. user: 'My dashboard keeps throwing hydration mismatches only in production' assistant: 'I'll use the nextjs-senior-dev agent to diagnose and fix this - it specializes in complex Next.js debugging.'</example>
+description: NEXUS — Principal-level Next.js 14+ App Router specialist. Use for architecture decisions, performance optimization, hydration debugging, multi-tenant patterns, and enterprise-grade Next.js features.
 model: sonnet
 color: blue
 ---

@@ -5,15 +5,8 @@ You are executing the **test-verify** workflow - runs tests and verifies the app
 ## Pre-computed Context
 
 ```bash
-# Detect project type
+# Detect project type and test framework
 HAS_PACKAGE_JSON=$(test -f package.json && echo "yes" || echo "no")
-HAS_PYPROJECT=$(test -f pyproject.toml && echo "yes" || echo "no")
-HAS_SETUP_PY=$(test -f setup.py && echo "yes" || echo "no")
-HAS_CARGO_TOML=$(test -f Cargo.toml && echo "yes" || echo "no")
-HAS_GO_MOD=$(test -f go.mod && echo "yes" || echo "no")
-HAS_MAKEFILE=$(test -f Makefile && echo "yes" || echo "no")
-
-# Node.js detection
 TEST_SCRIPT=$(cat package.json 2>/dev/null | jq -r '.scripts.test // "none"')
 TYPECHECK_SCRIPT=$(cat package.json 2>/dev/null | jq -r '.scripts["type-check"] // .scripts.typecheck // "none"')
 LINT_SCRIPT=$(cat package.json 2>/dev/null | jq -r '.scripts.lint // "none"')
@@ -21,43 +14,22 @@ BUILD_SCRIPT=$(cat package.json 2>/dev/null | jq -r '.scripts.build // "none"')
 HAS_PLAYWRIGHT=$(test -f playwright.config.ts && echo "yes" || echo "no")
 HAS_VITEST=$(grep -q "vitest" package.json 2>/dev/null && echo "yes" || echo "no")
 HAS_JEST=$(grep -q "jest" package.json 2>/dev/null && echo "yes" || echo "no")
-
-# Python detection
-HAS_PYTEST=$(pip list 2>/dev/null | grep -q pytest && echo "yes" || echo "no")
-HAS_MYPY=$(pip list 2>/dev/null | grep -q mypy && echo "yes" || echo "no")
-HAS_RUFF=$(pip list 2>/dev/null | grep -q ruff && echo "yes" || echo "no")
-
-# Shell detection
-SHELL_SCRIPTS=$(find . -maxdepth 2 -name "*.sh" -type f 2>/dev/null | head -5)
-HAS_SHELLCHECK=$(command -v shellcheck >/dev/null 2>&1 && echo "yes" || echo "no")
 ```
 
-**Project Type Detection:**
-- Node.js: $HAS_PACKAGE_JSON | Python: $HAS_PYPROJECT / $HAS_SETUP_PY | Rust: $HAS_CARGO_TOML | Go: $HAS_GO_MOD
-
-**Node.js:** Test=$TEST_SCRIPT | TypeCheck=$TYPECHECK_SCRIPT | Lint=$LINT_SCRIPT | Build=$BUILD_SCRIPT | Playwright=$HAS_PLAYWRIGHT | Vitest=$HAS_VITEST | Jest=$HAS_JEST
-**Python:** Pytest=$HAS_PYTEST | Mypy=$HAS_MYPY | Ruff=$HAS_RUFF
-**Shell:** Scripts=$SHELL_SCRIPTS | Shellcheck=$HAS_SHELLCHECK
+**Package.json:** $HAS_PACKAGE_JSON
+**Test Script:** $TEST_SCRIPT
+**Type Check:** $TYPECHECK_SCRIPT
+**Lint Script:** $LINT_SCRIPT
+**Build Script:** $BUILD_SCRIPT
+**Has Playwright:** $HAS_PLAYWRIGHT
+**Has Vitest:** $HAS_VITEST
+**Has Jest:** $HAS_JEST
 
 ## User Intent
 
 $ARGUMENTS
 
-## Project Type Auto-Detection
-
-Determine project type from pre-computed context:
-- **Node.js/TypeScript** if $HAS_PACKAGE_JSON = "yes" (default)
-- **Python** if $HAS_PYPROJECT = "yes" or $HAS_SETUP_PY = "yes"
-- **Shell/Bash** if shell scripts found and no package.json/pyproject.toml
-- **Rust** if $HAS_CARGO_TOML = "yes"
-- **Go** if $HAS_GO_MOD = "yes"
-- **Makefile** if $HAS_MAKEFILE = "yes" and no other match
-
-Run the workflow matching the detected project type.
-
----
-
-## Node.js/TypeScript Workflow
+## Full Verification Workflow
 
 ### Phase 1: Static Analysis
 Run in parallel where possible:
@@ -103,96 +75,6 @@ Use Playwright MCP to:
 2. Navigate to relevant pages
 3. Take screenshots
 4. Verify UI renders correctly
-
----
-
-## Python Workflow
-
-### Phase 1: Static Analysis
-Run in parallel where possible:
-
-1. **Type Check** (if mypy available)
-```bash
-mypy . --ignore-missing-imports
-```
-
-2. **Lint Check** (prefer ruff, fallback to flake8)
-```bash
-ruff check . || flake8 .
-```
-
-### Phase 2: Unit/Integration Tests
-```bash
-pytest -v
-```
-
-If specific test file requested in $ARGUMENTS:
-```bash
-pytest -v [file-pattern]
-```
-
-### Phase 3: Build Verification
-```bash
-python -m py_compile [main-file] || python -c "import [package]"
-```
-
----
-
-## Shell/Bash Workflow
-
-### Phase 1: Static Analysis
-```bash
-shellcheck *.sh scripts/*.sh
-```
-
-### Phase 2: Functional Tests
-Run any test scripts found:
-```bash
-bash tests/test_*.sh || bash test.sh
-```
-
-### Phase 3: Syntax Check
-```bash
-bash -n [each .sh file]
-```
-
----
-
-## Rust Workflow
-
-### Phase 1: Static Analysis
-```bash
-cargo clippy -- -D warnings
-```
-
-### Phase 2: Tests
-```bash
-cargo test
-```
-
-### Phase 3: Build
-```bash
-cargo build
-```
-
----
-
-## Go Workflow
-
-### Phase 1: Static Analysis
-```bash
-go vet ./...
-```
-
-### Phase 2: Tests
-```bash
-go test ./...
-```
-
-### Phase 3: Build
-```bash
-go build ./...
-```
 
 ## Reporting
 

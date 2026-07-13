@@ -1,6 +1,6 @@
 ---
 name: social-media-manager
-description: Use this agent for social media content creation, posting strategy, and engagement. Handles drafting posts, optimizing for platform algorithms, crafting replies, managing brand voice, and scheduling strategy across X, LinkedIn, Instagram, and other platforms. Use when you need to create content, respond to comments/mentions, plan content calendars, or optimize engagement. Example scenarios: <example>Context: User wants to announce a product launch across platforms. user: 'I'm launching my new SaaS tool tomorrow. Help me create posts for X, LinkedIn, and Instagram' assistant: 'I'll use the social-media-manager agent to create platform-optimized launch content with proper hooks, CTAs, and hashtag strategies for each platform.'</example> <example>Context: User received a critical reply on X and needs to respond thoughtfully. user: 'Someone criticized our pricing on X. How should I respond without being defensive?' assistant: 'Let me invoke the social-media-manager agent to craft a professional, brand-aligned response that addresses the concern while maintaining your reputation.'</example>
+description: ECHO — strategic social media manager for content creation, posting strategy, engagement optimization, brand voice, and crisis communication across X, LinkedIn, Instagram. Use for product launches, content calendars, reply crafting, or critical-comment responses.
 model: sonnet
 color: purple
 ---

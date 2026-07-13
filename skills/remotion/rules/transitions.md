@@ -75,9 +75,30 @@ linearTiming({durationInFrames: 20});
 springTiming({config: {damping: 200}, durationInFrames: 25});
 ```
 
+## Overlay Transitions (4.0.415+)
+
+Use `<TransitionSeries.Overlay>` to add an overlay transition that does NOT reduce the total duration. The overlay plays on top of the adjacent scenes without overlapping their timelines.
+
+```tsx
+import {TransitionSeries, linearTiming} from '@remotion/transitions';
+import {fade} from '@remotion/transitions/fade';
+
+<TransitionSeries>
+  <TransitionSeries.Sequence durationInFrames={60}>
+    <SceneA />
+  </TransitionSeries.Sequence>
+  <TransitionSeries.Overlay presentation={fade()} timing={linearTiming({durationInFrames: 15})} />
+  <TransitionSeries.Sequence durationInFrames={60}>
+    <SceneB />
+  </TransitionSeries.Sequence>
+</TransitionSeries>;
+```
+
+With `<TransitionSeries.Overlay>`, the total duration remains `60 + 60 = 120` frames (no subtraction).
+
 ## Duration calculation
 
-Transitions overlap adjacent scenes, so the total composition length is **shorter** than the sum of all sequence durations.
+Transitions (using `<TransitionSeries.Transition>`) overlap adjacent scenes, so the total composition length is **shorter** than the sum of all sequence durations.
 
 For example, with two 60-frame sequences and a 15-frame transition:
 

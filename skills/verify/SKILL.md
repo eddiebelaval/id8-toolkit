@@ -1,45 +1,13 @@
----
-name: Verify
-slug: verify
-description: Unified verification — chains static analysis, tests, and visual checks
-category: testing
-complexity: complex
-version: "1.0.0"
-author: "id8Labs"
-triggers:
-  - "verify"
-  - "verify this"
-  - "run verification"
-  - "check everything"
-  - "preflight check"
-tags:
-  - verification
-  - testing
-  - quality
-  - preflight
----
-
-# Verify — Unified Verification Skill
+# /verify - Unified Verification Skill
 
 A comprehensive verification skill that chains static analysis, tests, and visual verification. Inspired by Boris Cherny's "verify-app" subagent pattern.
 
-## Core Workflows
-
-### Workflow 1: Full Verification
-1. Run static analysis (TypeScript, ESLint, Prettier)
-2. Run unit tests
-3. Run E2E tests (if available)
-4. Visual verification via browser (if applicable)
-5. Report pass/fail with details
-
-## Quick Reference
-
-| Action | Command |
-|--------|---------|
-| Full verification | `/verify` |
-| Static only | `/verify quick` |
-| Visual check | `/verify visual` |
-| Specific target | `/verify [component]` |
+## Trigger
+- `/verify` - Run full verification suite
+- `/verify quick` - Static analysis only
+- `/verify visual` - Browser-based visual verification
+- `/verify deploy <url>` - Production deployment verification (curl + Playwright + Vercel/CF)
+- `/verify [component]` - Verify specific component/feature
 
 ## Philosophy
 
@@ -129,6 +97,64 @@ Only runs Layer 1 (Static Analysis).
 
 ### Visual Mode (`/verify visual`)
 Only runs Layer 5 (Visual Verification) using Playwright MCP.
+
+### Deploy Mode (`/verify deploy <url>`)
+
+Verifies a PRODUCTION deployment is actually live and working. This closes the
+"HTTP 200 ≠ working" and "pushed ≠ deployed" gap. Git push success and a 200
+response from the origin do NOT mean the app is functioning.
+
+**Required argument:** the production URL (e.g. `https://parallax.id8labs.tech`).
+
+**Optional flags:**
+- `--vercel <project>`: also query Vercel for the latest deployment timestamp
+- `--cf <zone>`: also query Cloudflare for the latest deployment
+- `--expect "<text>"`: assert specific text appears on the rendered page
+- `--routes "/a,/b,/c"`: also check additional routes beyond root
+
+**Process:**
+
+1. **Server-side check** via `curl -sS -o /dev/null -w "%{http_code} %{time_total}s" <url>`
+   - Status code, response time, redirects.
+   - GATE: 200 (or 308→200) within 5 seconds.
+
+2. **Client-side render check** (Playwright MCP)
+   - Navigate to the URL.
+   - `browser_console_messages` → check for any `error` level messages.
+   - Wait for network-idle (or 3s, whichever first).
+   - `browser_snapshot` → confirm the page actually rendered DOM (not a blank shell).
+   - If `--expect` is set, assert that text is present.
+   - For each route in `--routes`, repeat.
+   - GATE: zero console errors, expected text present, DOM has > 500 chars.
+
+3. **Deploy-platform timestamp check** (if `--vercel` or `--cf` provided)
+   - Query the platform API for the latest deployment.
+   - Confirm the deploy completed (state=READY for Vercel; success for CF).
+   - Compare timestamp to git HEAD. Warn if origin commit is newer than deploy.
+   - GATE: latest deploy is in READY state.
+
+4. **Report**, a single PASS/FAIL with evidence:
+   ```
+   ╔══════════════════════════════════════════════════════════╗
+   ║              DEPLOY VERIFICATION: <url>                  ║
+   ╠══════════════════════════════════════════════════════════╣
+   ║ Server (HTTP)         ✅ PASS  200 in 0.42s              ║
+   ║ Client (rendered)     ✅ PASS  no console errors         ║
+   ║ Routes (/, /login)    ✅ PASS  3/3 rendered              ║
+   ║ Vercel deploy state   ✅ PASS  READY @ 2026-05-21T15:08Z ║
+   ║ Git HEAD vs deploy    ✅ PASS  in sync (sha 4a9b21c)     ║
+   ╠══════════════════════════════════════════════════════════╣
+   ║ OVERALL: ✅ DEPLOYMENT VERIFIED                          ║
+   ╚══════════════════════════════════════════════════════════╝
+   ```
+
+   On FAIL, lead with the worst signal (e.g., "console crash on hydration"),
+   include the error text, and name what to check next.
+
+**Why this exists:** Parallax went down with a client-side hydration crash
+while origin returned HTTP 200 (see the Apr-May 2026 outage). The retro
+flagged it; this mode prevents the recurrence. Run before claiming any
+deploy is "live" or "shipped".
 
 ## Playwright MCP Integration
 

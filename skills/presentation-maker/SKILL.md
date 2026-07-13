@@ -1,10 +1,10 @@
 ---
 name: Presentation Maker
 slug: presentation-maker
-description: Generate PowerPoint presentations with slides, layouts, charts, and multimedia
+description: Generate professional PowerPoint presentations with slides, charts, and speaker notes
 category: document-creation
 complexity: complex
-version: "1.0.0"
+version: "2.0.0"
 author: "ID8Labs"
 triggers:
   - "create presentation"
@@ -12,6 +12,7 @@ triggers:
   - "make slides"
   - "build pptx"
   - "create deck"
+  - "pitch deck"
 tags:
   - powerpoint
   - presentations
@@ -22,537 +23,319 @@ tags:
 
 # Presentation Maker
 
-The Presentation Maker skill enables automated creation of professional PowerPoint presentations (.pptx) with custom layouts, themes, charts, images, and multimedia. Using libraries like `pptxgenjs`, this skill handles everything from simple slide decks to complex presentations with data visualizations and animations.
+Generate professional PowerPoint (.pptx) presentations directly. This skill requires the `pptxgenjs` library since HTML cannot produce .pptx files. The same operational principle applies: **you generate the file, not a program that generates it.**
 
-Create pitch decks, training materials, reports, project updates, and any presentation content programmatically. Support for master slides, themes, charts, tables, images, shapes, and speaker notes makes this a complete solution for presentation automation.
+**Reference `document-design-foundation` for color palette and styling consistency.**
 
-## Core Workflows
+## How This Works
 
-### Workflow 1: Create Basic Presentation
-**Purpose:** Build a simple presentation with title and content slides
+```
+User: "create a presentation on our Q1 results"
+                |
+                v
+  1. Determine slide structure (title, content, charts, closing)
+  2. Write a temporary Node.js script using pptxgenjs
+  3. Run it to generate the .pptx file
+  4. Delete the script
+  5. Tell the user where the file is
+```
 
-**Steps:**
-1. Import `pptxgenjs` and create Presentation instance
-2. Define presentation properties (title, author, company)
-3. Add title slide with company branding
-4. Add content slides with bullet points
-5. Apply consistent theme and fonts
-6. Add slide numbers
-7. Export to .pptx file
+## Slide Structure Patterns
 
-**Implementation:**
+### Pitch Deck (8-12 slides)
+```
+1. Title Slide (company, tagline, date)
+2. Problem (what pain exists)
+3. Solution (how you solve it)
+4. Product (screenshot or demo)
+5. Market Size (TAM/SAM/SOM)
+6. Business Model (how you make money)
+7. Traction (metrics, growth)
+8. Team (key people)
+9. Ask (what you need)
+10. Contact (how to reach you)
+```
+
+### Status Update (5-8 slides)
+```
+1. Title Slide (project, period)
+2. Executive Summary (3 bullets + status badge)
+3. KPI Dashboard (4-6 metrics)
+4. Accomplishments (what got done)
+5. Challenges (what's blocking)
+6. Next Steps (priorities)
+7. Appendix (optional, detailed data)
+```
+
+### Training / Workshop (10-20 slides)
+```
+1. Title Slide
+2. Agenda / Outline
+3-N. Content Slides (one idea per slide)
+N+1. Key Takeaways (3-5 bullets)
+N+2. Q&A / Discussion
+N+3. Resources / Contact
+```
+
+## Generation Workflow
+
+### Step 1: Write the Generator Script
+
+Create at `/tmp/gen-presentation.mjs`:
+
 ```javascript
-const PptxGenJS = require('pptxgenjs');
-
-function createBasicPresentation(content, outputPath) {
-  const pptx = new PptxGenJS();
-
-  // Set presentation properties
-  pptx.author = 'Company Name';
-  pptx.company = 'Company Name';
-  pptx.subject = content.subject;
-  pptx.title = content.title;
-
-  // Title slide
-  let slide = pptx.addSlide();
-  slide.background = { color: '2C3E50' };
-  slide.addText(content.title, {
-    x: 0.5,
-    y: 2.5,
-    w: '90%',
-    h: 1.5,
-    fontSize: 44,
-    bold: true,
-    color: 'FFFFFF',
-    align: 'center'
-  });
-  slide.addText(content.subtitle, {
-    x: 0.5,
-    y: 4.0,
-    w: '90%',
-    fontSize: 24,
-    color: 'BDC3C7',
-    align: 'center'
-  });
-
-  // Content slides
-  content.slides.forEach(slideData => {
-    let slide = pptx.addSlide();
-
-    // Title
-    slide.addText(slideData.title, {
-      x: 0.5,
-      y: 0.5,
-      w: '90%',
-      h: 0.75,
-      fontSize: 32,
-      bold: true,
-      color: '2C3E50'
-    });
-
-    // Bullet points
-    slide.addText(slideData.bullets, {
-      x: 0.5,
-      y: 1.5,
-      w: '90%',
-      h: 4.0,
-      fontSize: 18,
-      bullet: true,
-      color: '34495E'
-    });
-
-    // Slide number
-    slide.addText(`${pptx.getSlideNumber()}`, {
-      x: 9.0,
-      y: 7.0,
-      w: 0.5,
-      h: 0.3,
-      fontSize: 12,
-      color: '95A5A6',
-      align: 'right'
-    });
-  });
-
-  pptx.writeFile({ fileName: outputPath });
-}
-```
-
-### Workflow 2: Add Charts and Data Visualizations
-**Purpose:** Create slides with embedded charts from data
-
-**Steps:**
-1. Create presentation
-2. Prepare chart data (labels and values)
-3. Add chart slide with title
-4. Define chart type (bar, line, pie, scatter, etc.)
-5. Configure chart options (colors, legend, axes)
-6. Add data labels and formatting
-7. Position chart on slide
-
-**Implementation:**
-```javascript
-function createPresentationWithCharts(data, outputPath) {
-  const pptx = new PptxGenJS();
-
-  // Bar chart slide
-  let slide = pptx.addSlide();
-  slide.addText('Quarterly Revenue', {
-    x: 0.5, y: 0.5, w: '90%', fontSize: 32, bold: true
-  });
-
-  const chartData = [
-    {
-      name: 'Revenue',
-      labels: data.quarters,
-      values: data.revenue
-    }
-  ];
-
-  slide.addChart(pptx.ChartType.bar, chartData, {
-    x: 1.0,
-    y: 1.5,
-    w: 8.0,
-    h: 4.5,
-    chartColors: ['2E74B5'],
-    showTitle: false,
-    showLegend: true,
-    legendPos: 'b',
-    valAxisMaxVal: Math.max(...data.revenue) * 1.2,
-    dataLabelFormatCode: '$#,##0',
-    showValue: true
-  });
-
-  // Pie chart slide
-  slide = pptx.addSlide();
-  slide.addText('Market Share', {
-    x: 0.5, y: 0.5, w: '90%', fontSize: 32, bold: true
-  });
-
-  const pieData = [
-    { name: 'Product A', labels: ['Share'], values: [35] },
-    { name: 'Product B', labels: ['Share'], values: [28] },
-    { name: 'Product C', labels: ['Share'], values: [22] },
-    { name: 'Others', labels: ['Share'], values: [15] }
-  ];
-
-  slide.addChart(pptx.ChartType.pie, pieData, {
-    x: 2.0,
-    y: 1.5,
-    w: 6.0,
-    h: 4.5,
-    showPercent: true,
-    chartColors: ['2E74B5', '5DA5DA', '60BD68', 'F17CB0']
-  });
-
-  // Line chart for trends
-  slide = pptx.addSlide();
-  slide.addText('Growth Trend', {
-    x: 0.5, y: 0.5, w: '90%', fontSize: 32, bold: true
-  });
-
-  const lineData = [
-    {
-      name: '2024',
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      values: [10, 15, 13, 18, 22, 25]
-    },
-    {
-      name: '2025',
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      values: [12, 18, 16, 22, 27, 32]
-    }
-  ];
-
-  slide.addChart(pptx.ChartType.line, lineData, {
-    x: 1.0,
-    y: 1.5,
-    w: 8.0,
-    h: 4.5,
-    lineSmooth: true,
-    chartColors: ['2E74B5', 'E74C3C']
-  });
-
-  pptx.writeFile({ fileName: outputPath });
-}
-```
-
-### Workflow 3: Create Presentation from Template
-**Purpose:** Use a master slide template for consistent branding
-
-**Steps:**
-1. Load or define master slide layouts
-2. Set theme colors and fonts
-3. Define slide layouts (title, content, two-column, etc.)
-4. Create slides using predefined layouts
-5. Apply company branding consistently
-6. Add footer and logo to all slides
-7. Export with template applied
-
-**Implementation:**
-```javascript
-function createFromTemplate(content, outputPath) {
-  const pptx = new PptxGenJS();
-
-  // Define theme colors
-  pptx.defineLayout({ name: 'CUSTOM', width: 10, height: 5.625 });
-  pptx.layout = 'CUSTOM';
-
-  // Define master slide
-  const masterSlide = pptx.defineSlideMaster({
-    title: 'MASTER_SLIDE',
-    background: { color: 'FFFFFF' },
-    objects: [
-      // Company logo
-      { image: { x: 0.5, y: 0.2, w: 1.0, h: 0.4, path: 'company-logo.png' } },
-      // Footer
-      { text: { text: 'Company Confidential', options: { x: 0.5, y: 5.0, fontSize: 10, color: '95A5A6' } } }
-    ]
-  });
-
-  // Use master slide for content
-  content.slides.forEach(slideData => {
-    let slide = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
-
-    slide.addText(slideData.title, {
-      x: 2.0, y: 0.5, w: 7.5, fontSize: 28, bold: true, color: '2C3E50'
-    });
-
-    slide.addText(slideData.content, {
-      x: 2.0, y: 1.5, w: 7.5, fontSize: 16, color: '34495E'
-    });
-  });
-
-  pptx.writeFile({ fileName: outputPath });
-}
-```
-
-### Workflow 4: Add Images and Media
-**Purpose:** Include images, shapes, and multimedia content
-
-**Steps:**
-1. Create presentation
-2. Add image slides with captions
-3. Resize and position images
-4. Add shapes (rectangles, circles, arrows)
-5. Layer elements with z-index
-6. Add hyperlinks to images
-7. Insert video placeholders (if supported)
-
-**Implementation:**
-```javascript
-function createWithMedia(content, outputPath) {
-  const pptx = new PptxGenJS();
-
-  // Image slide
-  let slide = pptx.addSlide();
-  slide.addText(content.title, {
-    x: 0.5, y: 0.5, fontSize: 32, bold: true
-  });
-
-  // Add image
-  slide.addImage({
-    path: content.imagePath,
-    x: 1.5,
-    y: 1.5,
-    w: 7.0,
-    h: 4.0,
-    sizing: { type: 'contain', w: 7.0, h: 4.0 }
-  });
-
-  // Add caption
-  slide.addText(content.caption, {
-    x: 1.5,
-    y: 5.7,
-    w: 7.0,
-    fontSize: 14,
-    italic: true,
-    align: 'center',
-    color: '7F8C8D'
-  });
-
-  // Slide with shapes
-  slide = pptx.addSlide();
-
-  // Background shape
-  slide.addShape(pptx.ShapeType.rect, {
-    x: 0.5,
-    y: 1.5,
-    w: 9.0,
-    h: 4.5,
-    fill: { color: 'ECF0F1' },
-    line: { color: '3498DB', width: 2 }
-  });
-
-  // Arrow shapes for process flow
-  slide.addShape(pptx.ShapeType.rightArrow, {
-    x: 1.0,
-    y: 3.0,
-    w: 2.0,
-    h: 1.0,
-    fill: { color: '3498DB' }
-  });
-
-  slide.addText('Step 1', {
-    x: 1.3, y: 3.3, w: 1.4, fontSize: 16, color: 'FFFFFF', bold: true, align: 'center'
-  });
-
-  pptx.writeFile({ fileName: outputPath });
-}
-```
-
-### Workflow 5: Add Tables and Data
-**Purpose:** Display structured data in table format
-
-**Steps:**
-1. Create slide
-2. Define table structure (rows and columns)
-3. Add header row with styling
-4. Populate data rows
-5. Apply cell formatting (colors, borders, alignment)
-6. Set column widths
-7. Add table title
-
-**Implementation:**
-```javascript
-function createWithTables(data, outputPath) {
-  const pptx = new PptxGenJS();
-
-  let slide = pptx.addSlide();
-  slide.addText('Project Status', {
-    x: 0.5, y: 0.5, fontSize: 32, bold: true
-  });
-
-  // Define table rows
-  const tableData = [
-    [
-      { text: 'Task', options: { bold: true, fill: '2C3E50', color: 'FFFFFF' } },
-      { text: 'Owner', options: { bold: true, fill: '2C3E50', color: 'FFFFFF' } },
-      { text: 'Status', options: { bold: true, fill: '2C3E50', color: 'FFFFFF' } },
-      { text: 'Due Date', options: { bold: true, fill: '2C3E50', color: 'FFFFFF' } }
-    ]
-  ];
-
-  // Add data rows
-  data.tasks.forEach(task => {
-    const statusColor = task.status === 'Complete' ? '27AE60' :
-                       task.status === 'In Progress' ? 'F39C12' : 'E74C3C';
-
-    tableData.push([
-      { text: task.name },
-      { text: task.owner },
-      { text: task.status, options: { fill: statusColor, color: 'FFFFFF' } },
-      { text: task.dueDate }
-    ]);
-  });
-
-  slide.addTable(tableData, {
-    x: 0.5,
-    y: 1.5,
-    w: 9.0,
-    colW: [3.0, 2.0, 2.0, 2.0],
-    border: { pt: 1, color: 'BDC3C7' },
-    fontSize: 14,
-    align: 'center',
-    valign: 'middle'
-  });
-
-  pptx.writeFile({ fileName: outputPath });
-}
-```
-
-### Workflow 6: Add Speaker Notes
-**Purpose:** Include presenter notes for each slide
-
-**Steps:**
-1. Create slides with content
-2. Add speaker notes to each slide
-3. Format notes with key talking points
-4. Include timing suggestions
-5. Add references and sources
-6. Export with notes included
-
-**Implementation:**
-```javascript
-content.slides.forEach(slideData => {
-  let slide = pptx.addSlide();
-
-  slide.addText(slideData.title, {
-    x: 0.5, y: 0.5, fontSize: 32, bold: true
-  });
-
-  slide.addText(slideData.content, {
-    x: 0.5, y: 1.5, fontSize: 18, bullet: true
-  });
-
-  // Add speaker notes
-  slide.addNotes(`
-    Key Points:
-    - ${slideData.notes.keyPoints.join('\n    - ')}
-
-    Timing: ${slideData.notes.timing}
-
-    Additional Context:
-    ${slideData.notes.context}
-  `);
-});
-```
-
-## Quick Reference
-
-| Action | Command/Trigger |
-|--------|-----------------|
-| Create presentation | "create powerpoint with [slides]" |
-| Add chart slide | "add chart to presentation" |
-| Insert image | "add image [file] to slide" |
-| Create table | "add table with [data]" |
-| From template | "use template for presentation" |
-| Add shapes | "add shapes to slide" |
-| Speaker notes | "add notes to slides" |
-| Export | "save presentation as [name]" |
-
-## Best Practices
-
-- **Consistency:** Use templates and master slides for uniform appearance
-- **Simplicity:** Keep slides clean with minimal text (6x6 rule: max 6 bullets, 6 words each)
-- **Visuals:** Use charts and images to convey information effectively
-- **Color Scheme:** Stick to 2-3 primary colors aligned with brand
-- **Font Size:** Minimum 18pt for body text, 28pt+ for headings
-- **Contrast:** Ensure text is readable against backgrounds
-- **Slide Count:** Aim for one slide per minute of presentation time
-- **Data Visualization:** Choose appropriate chart types for data
-- **White Space:** Don't overcrowd slides; use white space effectively
-- **Animations:** Use sparingly and only when they add value (not supported in pptxgenjs)
-- **File Size:** Compress images before embedding
-- **Accessibility:** Include alt text for images when possible
-
-## Common Patterns
-
-**Pitch Deck:**
-```javascript
-const pitchSlides = [
-  { type: 'title', title: 'Company Name', subtitle: 'Investor Pitch' },
-  { type: 'content', title: 'Problem', bullets: ['Pain point 1', 'Pain point 2'] },
-  { type: 'content', title: 'Solution', bullets: ['Our approach', 'Key benefits'] },
-  { type: 'chart', title: 'Market Size', chartType: 'bar' },
-  { type: 'content', title: 'Business Model', bullets: ['Revenue streams'] },
-  { type: 'chart', title: 'Financial Projections', chartType: 'line' },
-  { type: 'content', title: 'Team', image: 'team-photos.png' },
-  { type: 'content', title: 'Ask', bullets: ['Funding amount', 'Use of funds'] }
-];
-```
-
-**Training Presentation:**
-```javascript
-slides.forEach((slide, idx) => {
-  let s = pptx.addSlide();
-  s.addText(slide.title, { x: 0.5, y: 0.5, fontSize: 28, bold: true });
-  s.addText(slide.content, { x: 0.5, y: 1.5, fontSize: 16 });
-  if (slide.example) {
-    s.addText('Example:', { x: 0.5, y: 4.0, fontSize: 14, italic: true });
-    s.addText(slide.example, { x: 0.5, y: 4.4, fontSize: 14 });
-  }
-  s.addNotes(slide.trainerNotes);
-});
-```
-
-## Dependencies
-
-Install required packages:
-```bash
-npm install pptxgenjs
-```
-
-Alternative libraries:
-```bash
-npm install officegen  # Legacy option
-npm install node-pptx  # Another alternative
-```
-
-## Error Handling
-
-- **File Paths:** Verify image paths exist before adding to slides
-- **Data Validation:** Ensure chart data is properly formatted
-- **Memory:** For presentations with many high-res images, monitor memory usage
-- **Compatibility:** Test output in PowerPoint, Google Slides, and Keynote
-- **Chart Limits:** Some chart types have data point limitations
-- **Text Overflow:** Monitor text length to prevent overflow on slides
-
-## Performance Tips
-
-- Compress images before adding to presentation
-- Reuse image objects when same image appears on multiple slides
-- Batch slide creation operations
-- Use web-optimized images (72-96 DPI sufficient for screens)
-- Limit number of slides in a single file (<100 slides)
-
-## Advanced Features
-
-**Custom Layouts:**
-```javascript
-const layout = pptx.defineSlideMaster({
-  title: 'TWO_COLUMN',
-  background: { color: 'FFFFFF' },
+import PptxGenJS from 'pptxgenjs';
+
+const pptx = new PptxGenJS();
+
+// ============ THEME (Design Foundation Colors) ============
+const NAVY = '1A1A2E';
+const DARK_BLUE = '16213E';
+const ACCENT = '0F3460';
+const ACCENT_LIGHT = 'E8F0FE';
+const BODY_TEXT = '525252';
+const MUTED = 'A3A3A3';
+const WHITE = 'FFFFFF';
+const LIGHT_BG = 'F5F5F5';
+const SUCCESS = '0D7C3D';
+const DANGER = 'B91C1C';
+const WARNING = 'B45309';
+
+// ============ MASTER SLIDE ============
+pptx.defineSlideMaster({
+  title: 'MAIN',
+  background: { color: WHITE },
   objects: [
-    { rect: { x: 0, y: 0, w: 5, h: 5.625, fill: 'F0F0F0' } },
-    { rect: { x: 5, y: 0, w: 5, h: 5.625, fill: 'FFFFFF' } }
+    // Bottom accent bar
+    { rect: { x: 0, y: 6.9, w: '100%', h: 0.1, fill: { color: NAVY } } },
+    // Footer text
+    { text: {
+      text: 'id8Labs | Confidential',
+      options: { x: 0.5, y: 7.0, w: 4, h: 0.3, fontSize: 8, color: MUTED, fontFace: 'Calibri' }
+    }},
+    // Slide number
+    { text: {
+      text: { type: 'slideNumber' },
+      options: { x: 8.5, y: 7.0, w: 1, h: 0.3, fontSize: 8, color: MUTED, align: 'right', fontFace: 'Calibri' }
+    }}
   ]
 });
-```
 
-**Hyperlinks:**
-```javascript
-slide.addText('Visit Website', {
-  x: 1, y: 3, fontSize: 18,
-  hyperlink: { url: 'https://example.com', tooltip: 'Click to visit' },
-  color: '0000FF',
-  underline: true
+pptx.defineSlideMaster({
+  title: 'TITLE',
+  background: { color: NAVY },
+  objects: []
 });
+
+// ============ SLIDE 1: TITLE ============
+const slide1 = pptx.addSlide({ masterName: 'TITLE' });
+slide1.addText('Presentation Title', {
+  x: 0.8, y: 2.0, w: 8.4, h: 1.5,
+  fontSize: 36, fontFace: 'Georgia', color: WHITE, bold: true
+});
+slide1.addText('Subtitle or context line', {
+  x: 0.8, y: 3.5, w: 8.4, h: 0.6,
+  fontSize: 18, fontFace: 'Calibri', color: MUTED
+});
+slide1.addText('April 16, 2026', {
+  x: 0.8, y: 4.5, w: 8.4, h: 0.4,
+  fontSize: 14, fontFace: 'Calibri', color: MUTED
+});
+
+// ============ SLIDE 2: CONTENT ============
+const slide2 = pptx.addSlide({ masterName: 'MAIN' });
+slide2.addText('Section Heading', {
+  x: 0.8, y: 0.4, w: 8.4, h: 0.8,
+  fontSize: 28, fontFace: 'Georgia', color: NAVY, bold: true
+});
+slide2.addText([
+  { text: 'First key point about the topic.\n', options: { fontSize: 16, color: BODY_TEXT, fontFace: 'Calibri', bullet: true } },
+  { text: 'Second point with supporting detail.\n', options: { fontSize: 16, color: BODY_TEXT, fontFace: 'Calibri', bullet: true } },
+  { text: 'Third point driving home the message.', options: { fontSize: 16, color: BODY_TEXT, fontFace: 'Calibri', bullet: true } },
+], {
+  x: 0.8, y: 1.5, w: 8.4, h: 4.5,
+  lineSpacingMultiple: 1.5
+});
+// Speaker notes
+slide2.addNotes('Talking points: expand on each bullet. Emphasize the second point as the most important.');
+
+// ============ SLIDE 3: KPI DASHBOARD ============
+const slide3 = pptx.addSlide({ masterName: 'MAIN' });
+slide3.addText('Key Metrics', {
+  x: 0.8, y: 0.4, w: 8.4, h: 0.8,
+  fontSize: 28, fontFace: 'Georgia', color: NAVY, bold: true
+});
+
+const kpis = [
+  { label: 'MRR', value: '$2,400', change: '+34%', color: SUCCESS },
+  { label: 'Users', value: '12', change: '+8', color: SUCCESS },
+  { label: 'Runway', value: '5 mo', change: 'At risk', color: DANGER },
+  { label: 'NPS', value: '72', change: 'Stable', color: MUTED },
+];
+
+kpis.forEach((kpi, i) => {
+  const col = i % 2;
+  const row = Math.floor(i / 2);
+  const x = 0.8 + col * 4.5;
+  const y = 1.6 + row * 2.2;
+
+  // Card background
+  slide3.addShape(pptx.ShapeType.roundRect, {
+    x, y, w: 4.0, h: 1.8,
+    fill: { color: LIGHT_BG },
+    rectRadius: 0.1,
+    line: { color: 'E5E5E5', width: 1 }
+  });
+  // Label
+  slide3.addText(kpi.label.toUpperCase(), {
+    x: x + 0.3, y: y + 0.2, w: 3.4, h: 0.3,
+    fontSize: 10, fontFace: 'Calibri', color: MUTED, bold: true
+  });
+  // Value
+  slide3.addText(kpi.value, {
+    x: x + 0.3, y: y + 0.5, w: 3.4, h: 0.7,
+    fontSize: 32, fontFace: 'Georgia', color: NAVY, bold: true
+  });
+  // Change
+  slide3.addText(kpi.change, {
+    x: x + 0.3, y: y + 1.2, w: 3.4, h: 0.3,
+    fontSize: 12, fontFace: 'Calibri', color: kpi.color
+  });
+});
+
+// ============ SLIDE 4: TABLE ============
+const slide4 = pptx.addSlide({ masterName: 'MAIN' });
+slide4.addText('Data Breakdown', {
+  x: 0.8, y: 0.4, w: 8.4, h: 0.8,
+  fontSize: 28, fontFace: 'Georgia', color: NAVY, bold: true
+});
+
+slide4.addTable(
+  [
+    // Header row
+    [
+      { text: 'Product', options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+      { text: 'Revenue', options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+      { text: 'Status', options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+    ],
+    // Data rows
+    ['Homer Pro', '$1,800', 'Active'],
+    ['Parallax', '$0', 'Maintenance'],
+    ['Consulting', '$600', 'Active'],
+  ],
+  {
+    x: 0.8, y: 1.5, w: 8.4,
+    fontSize: 14, fontFace: 'Calibri', color: BODY_TEXT,
+    border: { type: 'solid', pt: 0.5, color: 'E5E5E5' },
+    rowH: [0.5, 0.45, 0.45, 0.45],
+    colW: [3.5, 2.5, 2.4],
+    autoPage: true
+  }
+);
+
+// ============ SLIDE 5: CHART ============
+const slide5 = pptx.addSlide({ masterName: 'MAIN' });
+slide5.addText('Revenue Trend', {
+  x: 0.8, y: 0.4, w: 8.4, h: 0.8,
+  fontSize: 28, fontFace: 'Georgia', color: NAVY, bold: true
+});
+
+slide5.addChart(pptx.ChartType.bar, [
+  {
+    name: 'Revenue',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+    values: [1200, 1500, 1800, 2400]
+  }
+], {
+  x: 0.8, y: 1.5, w: 8.4, h: 5.0,
+  showValue: true,
+  valueFontSize: 10,
+  catAxisLabelFontSize: 12,
+  valAxisLabelFontSize: 10,
+  chartColors: [ACCENT],
+  catAxisOrientation: 'minMax'
+});
+
+// ============ CLOSING SLIDE ============
+const closing = pptx.addSlide({ masterName: 'TITLE' });
+closing.addText('Thank You', {
+  x: 0.8, y: 2.5, w: 8.4, h: 1.0,
+  fontSize: 36, fontFace: 'Georgia', color: WHITE, bold: true, align: 'center'
+});
+closing.addText('eddie@id8labs.com', {
+  x: 0.8, y: 3.8, w: 8.4, h: 0.5,
+  fontSize: 16, fontFace: 'Calibri', color: MUTED, align: 'center'
+});
+
+// ============ SAVE ============
+await pptx.writeFile({ fileName: 'OUTPUT_PATH' });
+console.log('Presentation saved.');
 ```
 
-**Gradients:**
-```javascript
-slide.background = {
-  fill: { type: 'solid', color: '2C3E50' },
-  transparency: 0
-};
+### Step 2: Run and Clean Up
+
+```bash
+# Ensure pptxgenjs is available
+node -e "require('pptxgenjs')" 2>/dev/null || npm install -g pptxgenjs
+
+# Generate
+node /tmp/gen-presentation.mjs
+
+# Clean up
+rm /tmp/gen-presentation.mjs
 ```
+
+## Slide Design Rules
+
+### Typography
+- **Titles:** Georgia, 28-36pt, navy (`1A1A2E`)
+- **Body text:** Calibri, 14-18pt, gray (`525252`)
+- **Captions/labels:** Calibri, 10-12pt, muted (`A3A3A3`)
+- **Max 6 bullet points per slide**
+- **Max 8 words per bullet**
+
+### Layout
+- **One idea per slide.** If you need two ideas, make two slides.
+- **Left margin at 0.8"** for all content (consistent alignment)
+- **Title at y: 0.4"** on every content slide
+- **Content starts at y: 1.5"** (below title)
+- **Footer bar at y: 6.9"** (master slide handles this)
+
+### Color Usage
+- **Title slides:** Navy background, white text
+- **Content slides:** White background, navy headings, gray body
+- **Positive metrics:** Success green (`0D7C3D`)
+- **Negative metrics:** Danger red (`B91C1C`)
+- **Warnings:** Amber (`B45309`)
+- **Neutral:** Muted gray (`A3A3A3`)
+
+### Charts
+- Use `ACCENT` (`0F3460`) as primary chart color
+- Add value labels on bars/columns (`showValue: true`)
+- Keep axis labels readable (12pt minimum)
+- One chart per slide maximum
+
+## Content Quality Rules
+
+- **Every slide needs a clear heading.** No untitled slides.
+- **Speaker notes on every content slide.** Brief talking points.
+- **Data slides need context.** Don't just show numbers. Add "Key Takeaway:" text.
+- **No wall-of-text slides.** If it takes more than 6 bullets, split it.
+- **End with a clear ask or next step.** Don't just stop.
+
+## File Location
+
+```
+Project context:  ./docs/{subject}-{date}.pptx
+No project:       ~/Development/artifacts/{topic}/{subject}-{date}.pptx
+```
+
+## What NOT to Do
+
+- Do NOT scaffold a project with package.json
+- Do NOT create a PresentationBuilder class
+- Do NOT leave the temp script behind
+- Do NOT put paragraphs on slides (bullets only)
+- Do NOT skip speaker notes
+- Do NOT use more than 3 colors per slide
+- Do NOT use clip art or decorative shapes
