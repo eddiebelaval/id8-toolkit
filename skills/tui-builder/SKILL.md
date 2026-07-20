@@ -1,3 +1,13 @@
+---
+name: tui-builder
+version: 1.0.0
+description: |
+  Senior terminal-UI designer/developer — TUI visual design plus framework mastery
+  (Bubbletea, Ink, Textual, Ratatui), 10+ style presets (Corporate, Hacker, Cyberpunk,
+  Retro/DOS, Minimal), and clig.dev UX best practices. Use when: "tui", "terminal ui",
+  "terminal interface", "cli app", "command line application", "build a TUI".
+---
+
 # TUI Builder - Senior Terminal UI Designer & Developer
 
 > Master-level terminal interface design and development across all languages and aesthetics.

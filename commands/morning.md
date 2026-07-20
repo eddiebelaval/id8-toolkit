@@ -15,14 +15,29 @@ DAY_OF_WEEK=$(date +%A)
 
 ### 1. Load Memory Context
 
-Read `~/.claude/MEMORY.md` for:
+The live memory index (`~/.claude/projects/-Users-eddiebelaval-Development-id8/memory/MEMORY.md`)
+is auto-loaded into session context — do NOT read the old `~/.claude/MEMORY.md`
+(stale cross-project snapshot, historical only). From the loaded index surface:
 - Active projects and their status
 - Current focus area
 - Any deadlines or reminders
 
-Read `~/.claude/projects/-Users-eddiebelaval-Development/memory/session-log.md` for:
-- What was worked on yesterday
-- Any unfinished tasks or blockers
+### 1a. The Brain (Observatory + memory sentinel)
+
+Open the visual layer so Eddie sees the brain grow with his coffee:
+
+```bash
+open ~/Development/id8/observatory/index.html
+```
+
+Then read `~/Development/id8/observatory/data/health.json` (the memory sentinel's
+latest verdict, refreshed nightly 09:45):
+- **GREEN**: one line, "Brain GREEN", move on.
+- **YELLOW**: list the failing check ids + details in one compact block.
+- **RED**: lead the brief with it; a standing alert also exists at
+  `~/Development/id8/observatory/HEALTH-ALERT.md`.
+If health.json is missing or its date is not today or yesterday, say
+"memory sentinel did not report" (do not fabricate a posture).
 
 ### 1b. Warden Posture (Sentinel Swarm)
 

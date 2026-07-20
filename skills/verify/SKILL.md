@@ -1,3 +1,14 @@
+---
+name: verify
+version: 1.0.0
+description: |
+  Unified verification skill — chains static analysis, tests, and visual/browser
+  verification into one loop (Boris Cherny's verify-app pattern). Use when: "verify",
+  "/verify", after completing a feature, before a PR, after merging main, or debugging.
+  Modes: /verify (full suite), /verify quick (static only), /verify visual (browser),
+  /verify deploy <url> (production curl + Playwright + Vercel/CF).
+---
+
 # /verify - Unified Verification Skill
 
 A comprehensive verification skill that chains static analysis, tests, and visual verification. Inspired by Boris Cherny's "verify-app" subagent pattern.
