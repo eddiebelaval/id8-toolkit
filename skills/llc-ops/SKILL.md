@@ -1,48 +1,9 @@
 ---
-name: LLC Ops
-slug: llc-ops
-description: Expert LLC operations management for ID8Labs LLC (Florida single-member LLC). 9 specialized agents for compliance, tax strategy, asset protection, and business operations.
-category: operations
-complexity: complex
-version: "1.0.0"
-author: "id8Labs"
-triggers:
-  - "llc ops"
-  - "llc"
-  - "taxes"
-  - "annual report"
-  - "compliance"
-  - "bookkeeping"
-  - "deductions"
-  - "s-corp"
-tags:
-  - llc
-  - operations
-  - tax
-  - compliance
-  - finance
+name: llc-ops
+description: Expert LLC operations management for ID8Labs LLC (Florida single-member LLC). 9 specialized agents providing PhD-level expertise in compliance, tax strategy, asset protection, and business operations. Triggers on keywords like LLC, taxes, expenses, annual report, EIN, compliance, bookkeeping, deductions, filing, sunbiz, quarterly, S-Corp, retirement, audit, insurance, cash flow, mentor, teach, learn.
 ---
 
 # LLC Ops Command Center
-
-## Core Workflows
-
-### Workflow 1: Compliance Check
-1. Sentinel scans all deadlines within 90-day window
-2. Triage by urgency (critical/urgent/upcoming/on-radar)
-3. Provide action steps and penalty calculations
-
-### Workflow 2: Expense Management
-1. Ledger categorizes expense using IRS-aligned categories
-2. Apply tax treatment and deductibility percentage
-3. Flag strategic decisions (Section 179 vs depreciation)
-4. Track receipt requirements
-
-### Workflow 3: Filing Walkthrough
-1. Filer confirms correct form
-2. Pre-flight checklist of required documents
-3. Step-by-step with exact URLs and costs
-4. Post-filing confirmation and record keeping
 
 Nine specialized agents for running ID8Labs LLC with expert-level precision.
 
@@ -73,6 +34,50 @@ comptroller: what's my runway?
 monitor: any tax law changes I should know?
 mentor: explain estimated taxes like I'm new to this
 ```
+
+---
+
+## Adopted Workflow Plugins (Execution Layer)
+
+llc-ops adopts three Anthropic knowledge-work plugins to run id8Labs LLC. **The 9 agents are the judgment layer (Florida single-member LLC, disregarded entity, Schedule C reality, what's right for id8Labs); the plugins are the execution layer (workflow machinery + connector access).** Agent decides, plugin runs.
+
+| Plugin | What it brings | Connectors it uses |
+|--------|----------------|--------------------|
+| `small-business@knowledge-work-plugins` | SMB workflows: month-end close, cash-flow snapshot, invoice chase, payroll plan, tax prep, weekly briefs, margin/price analysis, contract review | QuickBooks, PayPal, HubSpot, DocuSign, GSuite/O365, Canva, Square, Stripe |
+| `finance@knowledge-work-plugins` | Accounting primitives: reconciliation, journal entries, financial statements, variance analysis, close management | QuickBooks/GL, bank feeds |
+| `legal@knowledge-work-plugins` | Legal primitives: contract review, NDA triage, compliance check, risk assessment, e-signature routing, vendor check, legal briefs | DocuSign, CLM, Gmail, document storage |
+
+**Invoke plugin skills with the fully-qualified `plugin:skill` form** (e.g. `small-business:close-month`, `finance:reconciliation`, `legal:review-contract`).
+
+### Agent → Plugin Routing
+
+| Agent | Reaches for | When |
+|-------|-------------|------|
+| **Sentinel** | `small-business:month-heads-up`, `small-business:tax-prep`, `legal:compliance-check` | 30-day cash/deadline outlook; quarterly-estimate prep; deadline compliance |
+| **Ledger** | `finance:journal-entry`, `finance:reconciliation`, `small-business:tax-prep` | Booking entries, reconciling QB vs processors, 1099 prep |
+| **Filer** | `legal:signature-request`, `small-business:tax-prep` | Routing docs for e-signature; producing the accountant handoff packet |
+| **Advisor** | `legal:legal-risk-assessment`, `legal:legal-response`, `legal:brief`, `legal:compliance-check` | Complex legal/tax questions, risk classification, topic research |
+| **Strategist** | `small-business:margin-analyzer`, `small-business:price-check`, `small-business:quarterly-review`, `finance:variance-analysis` | Margin/pricing modeling, QBR narrative, budget-vs-actual decomposition |
+| **Guardian** | `legal:review-contract`, `legal:triage-nda`, `legal:vendor-check`, `legal:signature-request`, `legal:compliance-check` | Contract red-flagging, NDA triage, vendor agreement status, liability review |
+| **Comptroller** | `small-business:cash-flow-snapshot`, `small-business:business-pulse`, `small-business:monday-brief`, `small-business:friday-brief`, `small-business:invoice-chase`, `small-business:plan-payroll`, `finance:financial-statements` | Cash position, runway, weekly pulse, overdue invoices, payroll forecast, P&L/BS/CF |
+| **Monitor** | `legal:brief`, `legal:compliance-check` | Regulatory topic research, change-impact assessment |
+| **Mentor** | (native — no plugin) | Teaching stays in llc-ops voice |
+
+### Composed primitive-chains (cross-agent)
+
+These chain plugin skills into a single id8Labs workflow (the PrimitiveOS pattern — a workflow is a chain of primitives):
+
+- **Month-end close** (Comptroller + Ledger): `small-business:close-month` → `finance:close-management` → `finance:reconciliation` → `finance:financial-statements`
+- **Quarterly estimated tax** (Sentinel + Strategist): `small-business:tax-prep` → `finance:variance-analysis`
+- **New vendor / contractor onboarding** (Guardian + Filer + Ledger): `legal:triage-nda` → `legal:review-contract` → `legal:signature-request` → `finance:journal-entry`
+- **Year-end 1099 prep** (Ledger + Filer): `small-business:tax-prep` (1099 mode) → `legal:vendor-check`
+
+### Adoption guardrails
+
+1. **Money / customer gate stays human.** The small-business plugin "approves every step that touches money or customers" by design — this aligns with Eddie's hard rule. Any plugin step that sends money, sends to a customer/partner, or files externally STOPS for Eddie's approval, even under a raised travel-autonomy gate.
+2. **FL SMLLC judgment overlays the generic workflow.** These plugins assume a generic SMB with accrual books, GL, sometimes SOX. id8Labs is a cash-basis Florida single-member disregarded entity filing Schedule C. The agent filters: skip SOX/intercompany, treat "financial statements" as Schedule-C-shaped, never present a generic SMB answer without the FL-SMLLC overlay.
+3. **Connectors degrade to manual input.** QuickBooks, PayPal, HubSpot, DocuSign, etc. are MCP connectors that are lazy + auth-gated and may not be connected for id8Labs yet. When a connector isn't authed, the skill accepts manual input — don't block; ask for the figures or files.
+4. **Prefer lightweight over heavyweight.** For running id8Labs itself, prefer these knowledge-work skills over the heavier `claude-for-financial-services` (IB-grade: DCF/LBO/comps) and `claude-for-legal` (`commercial-legal`/`corporate-legal`) suites. Reach for the heavy suites only for client engagements (e.g. Donato & Brill), not for our own books. They coexist by namespace — no collision.
 
 ---
 

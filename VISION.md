@@ -25,8 +25,8 @@ Make AI coding agents reliable, productive, and predictable by encoding the beha
 5. **Stage-Gate Pipeline** -- REALIZED
    11-stage build system from Concept Lock to Listen & Iterate. Each stage has a gate question that must be answered before advancing, plus agent-native additions for AI-assisted development. The pipeline enforces discipline without slowing momentum.
 
-6. **Community & Distribution** -- PARTIAL
-   Published on GitHub with an MIT license, interactive installer, and comprehensive README. Community engagement remains limited -- no Discord, no contributor guidelines, no external adoption metrics beyond GitHub stars.
+6. **Community & Distribution** -- PARTIAL (80%)
+   Published on GitHub with an MIT license, interactive installer, and comprehensive README. The full file-based community layer is now in place on the default branch: contributor guidelines (`CONTRIBUTING.md`), GitHub issue templates (bug report, feature request, skill submission), a PR template, a governance model (`GOVERNANCE.md`), a standalone code of conduct (`CODE_OF_CONDUCT.md`), a support/help router (`SUPPORT.md`) that establishes GitHub Discussions as the community channel, and a distribution doc (`DISTRIBUTION.md`) defining no-telemetry, GitHub-native adoption signals. An external developer can now find Squire, install it, get help, and contribute back without ever contacting the maintainer. Remaining gaps: no dedicated Discord (Discussions serves as the file-based forum by design), and no live adoption dashboard (adoption is read from public GitHub signals, not tracked telemetry — a deliberate anti-vision constraint).
 
 ---
 

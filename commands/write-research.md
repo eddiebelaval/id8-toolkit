@@ -70,6 +70,12 @@ Research articles are for insights discovered during the building process:
    - Suggest a filename slug
    - Offer to proceed with /publish-essay
 
+5. **Auto-Ingest to Knowledge System**
+   - Whether or not the user publishes, auto-run `/ingest-article` on the generated content
+   - Save the essay to a temp file if not yet published: `~/Development/id8/id8labs/content/drafts/{slug}.md`
+   - This ensures NO article is orphaned, even drafts that never get published
+   - If the user later publishes via `/publish-essay`, that command handles its own ingest (idempotent -- won't duplicate)
+
 ## Voice Calibration for Research
 
 | Do This | Not This |

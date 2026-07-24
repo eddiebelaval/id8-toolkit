@@ -91,13 +91,21 @@ Orchestrates the complete release announcement: essay generation, website publis
    - Capture confirmation screenshots
    - Return posted URLs
 
-6. **Summary Report**
+6. **Knowledge System Filing (AUTOMATIC)**
+   - The `/write-release` and `/publish-essay` steps both auto-trigger `/ingest-article`
+   - Verify the article was filed: check `knowledge/{domain}/raw/` for the slug
+   - If not filed (ingest failed silently), manually run `/ingest-article {essay-path}`
+   - This step is non-blocking -- the announcement is complete regardless
+
+7. **Summary Report**
    ```
-   ✅ Release Announcement Complete
+   Release Announcement Complete
 
    Essay: https://id8labs.app/essays/{slug}
    X: https://x.com/id8labs/status/{id}
    LinkedIn: https://linkedin.com/posts/{id}
+   KB Filed: knowledge/{domain}/raw/{slug}.md
+   MemPalace: articles/{domain}/{title}
 
    Next: Monitor engagement after 1 hour
    ```
@@ -181,43 +189,6 @@ After Stage 10 (Ship), the announce stage ensures:
 - Essay published at id8labs.app/essays/{slug}
 - X thread posted from @id8labs
 - LinkedIn post from Eddie's profile
-
-## Error Recovery
-
-If any stage fails, follow this protocol:
-
-### Stage 1 Failure (Content Generation)
-- **Cause:** Writer prompt issue, API timeout
-- **Action:** Retry `/write-release` or `/write-research` with adjusted parameters
-- **No rollback needed** — nothing published yet
-
-### Stage 2 Failure (Website Publishing)
-- **Cause:** Git push failure, Vercel deploy timeout, MDX syntax error
-- **Action:**
-  1. Check `git status` for uncommitted state
-  2. If MDX was committed but deploy failed: check Vercel dashboard or retry `vercel --prod`
-  3. If MDX has syntax errors: fix and recommit
-- **Rollback:** `git revert HEAD` to unpublish if content was pushed but shouldn't be live
-
-### Stage 3 Failure (Social Distribution)
-- **Cause:** Browser automation failure, login expired, rate limit
-- **Action:**
-  1. Report which platform failed (X, LinkedIn, or both)
-  2. Offer to retry just the failed platform
-  3. Offer to skip and continue with remaining platforms
-  4. Essay remains published regardless — social is additive
-- **No rollback** — partial social distribution is fine
-
-### Resume Support
-
-If the pipeline is interrupted at any point:
-```
-/announce-release --resume
-```
-Claude will check:
-1. Does the essay draft exist? (Skip Stage 1 if yes)
-2. Is the essay published at id8labs.app? (Skip Stage 2 if yes)
-3. Were social posts made? (Only post to missing platforms)
 
 ## Requirements
 

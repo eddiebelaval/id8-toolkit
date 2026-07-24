@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question / discuss
+    url: https://github.com/eddiebelaval/squire/discussions
+    about: Questions, ideas, and general discussion belong in Discussions, not issues. This is Squire's community channel.
+  - name: Getting help
+    url: https://github.com/eddiebelaval/squire/blob/main/SUPPORT.md
+    about: Where to go for help, routed by what you need.
+  - name: How to contribute
+    url: https://github.com/eddiebelaval/squire/blob/main/CONTRIBUTING.md
+    about: Read this before opening a feature request or skill submission.

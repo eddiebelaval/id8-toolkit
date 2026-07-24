@@ -4,7 +4,7 @@
 
 Build stage: Stage 11
 Drift status: CURRENT
-Last updated: 2026-03-18
+Last updated: 2026-07-08
 
 ---
 
@@ -34,6 +34,33 @@ Three install paths, all equivalent:
 1. **Curl single file** -- `curl -fsSL` the raw `squire.md` into project root or `~/.claude/CLAUDE.md`
 2. **Full installer** -- `./install.sh` with flags for `--dry-run`, `--commands-only`, `--uninstall`
 3. **Cherry-pick** -- Copy individual directories (`commands/`, `skills/`, `prompts/`) as needed
+
+## Community & Distribution
+
+Squire is distributed as public files on GitHub and governed as files, consistent with the
+anti-vision (no server, no accounts, no telemetry). The community layer is complete on the
+default branch:
+
+| Artifact | Purpose | Location |
+|----------|---------|----------|
+| Contributor guidelines | What we accept, how to contribute, standards | `CONTRIBUTING.md` |
+| Governance model | Roles, decision process, benevolent-maintainer model | `GOVERNANCE.md` |
+| Code of conduct | Behavior standard and enforcement | `CODE_OF_CONDUCT.md` |
+| Support router | Where to get help, by need | `SUPPORT.md` |
+| Distribution & adoption | Channels + no-telemetry GitHub-native adoption signals | `DISTRIBUTION.md` |
+| Changelog | Notable changes, versioning | `CHANGELOG.md` |
+| Issue templates | Bug report, feature request, skill submission | `.github/ISSUE_TEMPLATE/` |
+| Issue template config | Routes questions to GitHub Discussions | `.github/ISSUE_TEMPLATE/config.yml` |
+| PR template | Summary, testing, checklist | `.github/PULL_REQUEST_TEMPLATE.md` |
+| License | MIT | `LICENSE` |
+
+**Community channel:** GitHub Discussions (the file-based project's file-based forum) — no
+Discord by design. **Adoption measurement:** public GitHub signals (stars, forks,
+dependency graph, traffic, Discussions and contributor activity), never install telemetry.
+
+**Boundaries:** no dedicated Discord/forum host, no live adoption dashboard, no formal
+governance body beyond the documented maintainer model. These are deliberate — the
+file-based layer is the realization for a files-over-infrastructure product.
 
 ## Design System
 

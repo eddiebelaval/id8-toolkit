@@ -1,10 +1,10 @@
 ---
 name: Word Document Creator
 slug: word-document-creator
-description: Generate Microsoft Word .docx files with formatting, tables, images, and styles
+description: Generate professional documents as styled HTML or .docx files with formatting, tables, and images
 category: document-creation
 complexity: complex
-version: "1.0.0"
+version: "2.0.0"
 author: "ID8Labs"
 triggers:
   - "create word document"
@@ -12,6 +12,8 @@ triggers:
   - "make word file"
   - "create .docx"
   - "word document from template"
+  - "create a document"
+  - "write a document"
 tags:
   - word
   - docx
@@ -22,345 +24,297 @@ tags:
 
 # Word Document Creator
 
-The Word Document Creator skill provides comprehensive capabilities for generating Microsoft Word (.docx) documents programmatically. It handles formatting, styles, tables, images, headers, footers, and complex layouts using the `docx` library for Node.js. This skill is essential for automated document generation, report creation, and template-based workflows.
+Generate professional documents. Default to HTML format (opens in any browser, prints perfectly). Generate .docx only when the user specifically needs a Word file.
 
-Create everything from simple letters to complex reports with tables, charts, images, and custom styling. The skill supports both creation from scratch and template-based generation with variable replacement.
+**Reference the `document-design-foundation` skill for the base template, CSS system, and component library.**
 
-## Core Workflows
+## Decision: HTML or .docx?
 
-### Workflow 1: Create Formatted Document from Scratch
-**Purpose:** Build a Word document with headings, paragraphs, lists, and formatting
+| User Says | Format | Why |
+|---|---|---|
+| "create a document" | HTML | Universal, looks best, printable |
+| "write up a proposal" | HTML | Better styling control, instant preview |
+| "make a Word doc" | .docx | User explicitly asked for Word format |
+| "I need to send a .docx" | .docx | Recipient requires Word format |
+| "create a document I can edit in Word" | .docx | Editing in Word is the goal |
+| "template I can reuse" | .docx | Templates work better in Word |
 
-**Steps:**
-1. Import `docx` library and create Document instance
-2. Define styles for headings, body text, lists
-3. Add sections with headers and footers
-4. Create paragraphs with formatting (bold, italic, color, alignment)
-5. Add numbered and bulleted lists
-6. Insert tables with formatting
-7. Export to .docx file
+**Default to HTML unless the user specifically says "Word", "docx", or ".docx".**
 
-**Implementation:**
-```javascript
-const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = require('docx');
-const fs = require('fs');
+## HTML Document Workflow (Preferred)
 
-async function createDocument(outputPath) {
-  const doc = new Document({
-    sections: [{
-      properties: {},
-      headers: {
-        default: new Header({
-          children: [new Paragraph({ text: "Company Name", alignment: AlignmentType.RIGHT })]
-        })
-      },
-      children: [
-        new Paragraph({
-          text: "Business Proposal",
-          heading: HeadingLevel.HEADING_1,
-          alignment: AlignmentType.CENTER
-        }),
-        new Paragraph({
-          children: [
-            new TextRun({ text: "Prepared for: ", bold: true }),
-            new TextRun("Client Name")
-          ]
-        }),
-        new Paragraph({
-          text: "Executive Summary",
-          heading: HeadingLevel.HEADING_2
-        }),
-        new Paragraph({
-          text: "This proposal outlines the scope, timeline, and budget for the project...",
-          alignment: AlignmentType.JUSTIFIED
-        })
-      ]
-    }]
-  });
+This is the same workflow as the PDF Generator. Follow the `document-design-foundation` skill:
 
-  const buffer = await Packer.toBuffer(doc);
-  fs.writeFileSync(outputPath, buffer);
-}
+1. Choose the right template structure from the foundation
+2. Write real content (not placeholders)
+3. Save as a self-contained HTML file
+4. Tell the user where it is
+
+### Common Document Patterns
+
+**Business Letter:**
+```html
+<div class="document">
+  <div class="document-body" style="padding-top: 4rem;">
+    <p><strong>id8Labs LLC</strong><br>
+    Miami, FL<br>
+    eddie@id8labs.com</p>
+
+    <p style="margin-top: 2rem;">April 15, 2026</p>
+
+    <p style="margin-top: 1.5rem;">
+    Recipient Name<br>
+    Company<br>
+    Address
+    </p>
+
+    <p style="margin-top: 1.5rem;">Dear [Name],</p>
+
+    <p>Body of the letter...</p>
+
+    <p style="margin-top: 2rem;">Sincerely,</p>
+    <p><strong>Eddie Belaval</strong><br>Founder, id8Labs</p>
+  </div>
+</div>
 ```
 
-### Workflow 2: Generate Document from Template
-**Purpose:** Use a template Word file and replace placeholders with actual data
+**Meeting Notes:**
+```html
+<div class="document">
+  <div class="cover">
+    <h1>Meeting Notes</h1>
+    <p class="subtitle">Homer Strategy Session</p>
+    <div class="meta-row">
+      <span>April 15, 2026</span>
+      <span>Attendees: Eddie, Shah, Gus</span>
+    </div>
+  </div>
+  <div class="document-body">
+    <h2>Decisions Made</h2>
+    <ol>
+      <li><strong>Shah joins as CTO</strong> under pod model partnership.</li>
+      <li><strong>Focus on Miami market exclusively</strong> through Q3 2026.</li>
+    </ol>
 
-**Steps:**
-1. Load template .docx file using `pizzip` and `docxtemplater`
-2. Define data object with replacement values
-3. Set data to template
-4. Render template with substitutions
-5. Handle loops for repeated sections (tables, lists)
-6. Handle images and conditional sections
-7. Export final document
+    <h2>Discussion Notes</h2>
+    <p>Key points from the conversation...</p>
 
-**Implementation:**
-```javascript
-const Docxtemplater = require('docxtemplater');
-const PizZip = require('pizzip');
-const fs = require('fs');
-
-function generateFromTemplate(templatePath, data, outputPath) {
-  const content = fs.readFileSync(templatePath, 'binary');
-  const zip = new PizZip(content);
-
-  const doc = new Docxtemplater(zip, {
-    paragraphLoop: true,
-    linebreaks: true
-  });
-
-  // Data object with placeholder values
-  doc.setData({
-    clientName: data.clientName,
-    projectName: data.projectName,
-    date: new Date().toLocaleDateString(),
-    items: data.items, // Array for looping
-    total: data.total
-  });
-
-  doc.render();
-
-  const buf = doc.getZip().generate({
-    type: 'nodebuffer',
-    compression: 'DEFLATE'
-  });
-
-  fs.writeFileSync(outputPath, buf);
-}
-
-// Template placeholders: {clientName}, {projectName}, etc.
-// Loop syntax: {#items}{name} - {price}{/items}
+    <h2>Action Items</h2>
+    <table>
+      <thead>
+        <tr><th>Action</th><th>Owner</th><th>Due</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Draft partnership agreement</td><td>Eddie</td><td>Apr 22</td></tr>
+        <tr><td>Technical audit of Homer codebase</td><td>Shah</td><td>Apr 25</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 ```
 
-### Workflow 3: Create Document with Tables and Images
-**Purpose:** Build complex documents containing data tables and embedded images
+**Proposal / SOW:**
+```html
+<div class="document">
+  <div class="cover">
+    <h1>Service Proposal</h1>
+    <p class="subtitle">Prepared for [Client Name]</p>
+    <div class="meta-row">
+      <span>id8Labs LLC</span>
+      <span>April 15, 2026</span>
+      <span><span class="badge blue">Draft</span></span>
+    </div>
+  </div>
+  <div class="document-body">
+    <p class="lead">Summary of what we're proposing and why it matters.</p>
 
-**Steps:**
-1. Create Document instance
-2. Define table with rows and columns
-3. Set cell formatting (borders, shading, alignment)
-4. Add table headers with bold styling
-5. Populate data rows
-6. Insert images with sizing and positioning
-7. Add captions to images
-8. Export document
+    <h2>1. Scope of Work</h2>
+    <p>Detailed description...</p>
 
-**Implementation:**
-```javascript
-const { Document, Packer, Paragraph, Table, TableRow, TableCell, Media } = require('docx');
-const fs = require('fs');
+    <h2>2. Deliverables</h2>
+    <table>
+      <thead><tr><th>Deliverable</th><th>Timeline</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Initial audit</td><td>Week 1</td><td><span class="badge gray">Pending</span></td></tr>
+        <tr><td>Implementation</td><td>Weeks 2-4</td><td><span class="badge gray">Pending</span></td></tr>
+      </tbody>
+    </table>
 
-async function createTableDocument(data, imagePath, outputPath) {
-  const image = Media.addImage(doc, fs.readFileSync(imagePath), 300, 200);
+    <h2>3. Investment</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="label">Project Total</div>
+        <div class="value">$12,500</div>
+        <div class="change neutral">Fixed price</div>
+      </div>
+      <div class="kpi-card">
+        <div class="label">Timeline</div>
+        <div class="value">4 weeks</div>
+        <div class="change neutral">Start on signing</div>
+      </div>
+    </div>
 
-  const doc = new Document({
-    sections: [{
-      children: [
-        new Paragraph({ text: "Sales Report Q4 2025", heading: HeadingLevel.HEADING_1 }),
-        new Table({
-          rows: [
-            // Header row
-            new TableRow({
-              children: [
-                new TableCell({ children: [new Paragraph({ text: "Month", bold: true })] }),
-                new TableCell({ children: [new Paragraph({ text: "Revenue", bold: true })] }),
-                new TableCell({ children: [new Paragraph({ text: "Growth", bold: true })] })
-              ]
-            }),
-            // Data rows
-            ...data.map(row => new TableRow({
-              children: [
-                new TableCell({ children: [new Paragraph(row.month)] }),
-                new TableCell({ children: [new Paragraph(row.revenue)] }),
-                new TableCell({ children: [new Paragraph(row.growth)] })
-              ]
-            }))
-          ]
-        }),
-        new Paragraph({ text: "" }), // Spacing
-        new Paragraph({ text: "Revenue Trend Chart", heading: HeadingLevel.HEADING_2 }),
-        new Paragraph({ children: [image] }),
-        new Paragraph({ text: "Figure 1: Quarterly Revenue Trend", italics: true })
-      ]
-    }]
-  });
-
-  const buffer = await Packer.toBuffer(doc);
-  fs.writeFileSync(outputPath, buffer);
-}
+    <h2>4. Terms</h2>
+    <p>Payment schedule, cancellation policy, etc.</p>
+  </div>
+  <div class="document-footer">
+    <span>id8Labs LLC &middot; Confidential</span>
+    <span>Valid for 30 days</span>
+  </div>
+</div>
 ```
 
-### Workflow 4: Batch Generate Documents
-**Purpose:** Create multiple personalized documents from a data source
+## .docx Workflow (When Word Format Required)
 
-**Steps:**
-1. Load data source (JSON, CSV, database)
-2. Load document template
-3. For each record:
-   - Create new document instance
-   - Populate with record data
-   - Apply formatting
-   - Save with unique filename
-4. Track success/failure for each document
-5. Generate summary report
+When the user specifically needs a .docx file, generate it using the `docx` npm library.
 
-### Workflow 5: Add Advanced Formatting
-**Purpose:** Apply styles, fonts, colors, spacing, and page layout
+### Step 1: Write and Run a Generation Script
 
-**Steps:**
-1. Define custom styles in document
-2. Create style hierarchy (heading levels, body, captions)
-3. Set font families, sizes, colors
-4. Configure paragraph spacing and indentation
-5. Set page margins and orientation
-6. Add page numbers and section breaks
-7. Apply themes and color schemes
+Create a temporary Node.js script that generates the .docx file. Run it, then delete the script.
 
-**Implementation:**
 ```javascript
+// /tmp/generate-doc.mjs
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
+         Table, TableRow, TableCell, WidthType, Header, Footer,
+         BorderStyle, ShadingType } from 'docx';
+import { writeFileSync } from 'fs';
+
 const doc = new Document({
   styles: {
     paragraphStyles: [
       {
-        id: "CustomHeading",
-        name: "Custom Heading",
-        basedOn: "Heading1",
-        next: "Normal",
-        run: {
-          size: 32,
-          bold: true,
-          color: "2E74B5",
-          font: "Calibri"
-        },
-        paragraph: {
-          spacing: { before: 240, after: 120 }
-        }
+        id: "Normal",
+        name: "Normal",
+        run: { size: 22, font: "Calibri", color: "525252" },
+        paragraph: { spacing: { after: 200, line: 360 } }
       }
     ]
   },
   sections: [{
     properties: {
       page: {
-        margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } // 1440 = 1 inch
+        margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 }
       }
     },
+    headers: {
+      default: new Header({
+        children: [new Paragraph({
+          children: [new TextRun({ text: "id8Labs", size: 18, color: "A3A3A3" })],
+          alignment: AlignmentType.RIGHT
+        })]
+      })
+    },
     children: [
-      new Paragraph({ text: "Styled Heading", style: "CustomHeading" })
+      // Title
+      new Paragraph({
+        children: [new TextRun({ text: "Document Title", size: 48, bold: true, color: "1A1A2E", font: "Georgia" })],
+        spacing: { after: 100 }
+      }),
+      // Subtitle
+      new Paragraph({
+        children: [new TextRun({ text: "Subtitle or context", size: 24, color: "A3A3A3" })],
+        spacing: { after: 400 }
+      }),
+      // Section heading
+      new Paragraph({
+        text: "Section Heading",
+        heading: HeadingLevel.HEADING_2,
+        spacing: { before: 400, after: 200 },
+        border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: "E5E5E5" } }
+      }),
+      // Body text
+      new Paragraph({
+        children: [new TextRun({ text: "Body content goes here..." })],
+        alignment: AlignmentType.JUSTIFIED
+      }),
     ]
   }]
 });
+
+const buffer = await Packer.toBuffer(doc);
+writeFileSync("OUTPUT_PATH.docx", buffer);
+console.log("Document saved.");
 ```
 
-## Quick Reference
+### Step 2: Run It
 
-| Action | Command/Trigger |
-|--------|-----------------|
-| Create new document | "create word document [name]" |
-| From template | "generate docx from template [file]" |
-| Add table | "add table with [rows] rows to [doc]" |
-| Insert image | "insert [image] into word doc" |
-| Batch generate | "create word docs for each [data]" |
-| Apply style | "format word doc with [style]" |
-| Add header/footer | "add header [text] to document" |
-| Create TOC | "generate table of contents" |
-
-## Best Practices
-
-- **Styles Over Direct Formatting:** Define and use styles for consistency and easy updates
-- **Templates:** Use templates for repeated document types (contracts, reports, letters)
-- **Page Layout:** Set margins, orientation, and page size early in document creation
-- **Tables:** Use table styles for professional appearance and easy maintenance
-- **Images:** Compress images before embedding; use appropriate resolution (150-300 DPI)
-- **Headers/Footers:** Keep them simple and consistent across sections
-- **File Size:** Monitor document size; avoid embedding high-resolution images unnecessarily
-- **Compatibility:** Test documents in different Word versions if targeting broad audience
-- **Data Validation:** Validate input data before template substitution to avoid errors
-- **Error Handling:** Gracefully handle missing template placeholders
-- **Version Control:** Use template versioning for document types that evolve
-- **Accessibility:** Use proper heading hierarchy and alt text for images
-
-## Common Patterns
-
-**Meeting Minutes:**
-```javascript
-const doc = new Document({
-  sections: [{
-    children: [
-      new Paragraph({ text: "Meeting Minutes", heading: HeadingLevel.HEADING_1 }),
-      new Paragraph({ text: `Date: ${date}` }),
-      new Paragraph({ text: `Attendees: ${attendees.join(', ')}` }),
-      new Paragraph({ text: "Agenda", heading: HeadingLevel.HEADING_2 }),
-      // ... agenda items
-      new Paragraph({ text: "Action Items", heading: HeadingLevel.HEADING_2 }),
-      // ... action items table
-    ]
-  }]
-});
-```
-
-**Mail Merge:**
-```javascript
-// Template: Dear {firstName} {lastName}, ...
-contacts.forEach(contact => {
-  generateFromTemplate('letter-template.docx', contact, `letter-${contact.id}.docx`);
-});
-```
-
-## Dependencies
-
-Install required packages:
 ```bash
-npm install docx docxtemplater pizzip
+# Ensure docx is available
+npm list -g docx 2>/dev/null || npm install -g docx
+
+# Run the generator
+node /tmp/generate-doc.mjs
+
+# Clean up
+rm /tmp/generate-doc.mjs
 ```
 
-Optional for advanced features:
-```bash
-npm install docx-templates # Alternative templating
-npm install officegen      # Legacy support
-```
+### .docx Style Guide
 
-## Error Handling
+Match the design foundation's visual language in Word format:
 
-- **Template Errors:** Validate template structure before processing
-- **Missing Data:** Provide default values for optional template fields
-- **Image Loading:** Check image file existence before embedding
-- **File Permissions:** Handle write permission errors gracefully
-- **Memory Issues:** For large documents, consider streaming if supported
-- **Encoding:** Ensure proper UTF-8 encoding for international characters
+| Design Foundation | .docx Equivalent |
+|---|---|
+| `#1a1a2e` headings | `color: "1A1A2E"`, `font: "Georgia"` |
+| `#525252` body text | `color: "525252"`, `font: "Calibri"` |
+| `#a3a3a3` muted text | `color: "A3A3A3"` |
+| 16px body size | `size: 22` (in half-points) |
+| 1.6 line height | `line: 360` (in 240ths of a line) |
+| 1in margins | `1440` (in twips) |
+| Bordered h2 | `border.bottom: SINGLE, 6, "E5E5E5"` |
 
-## Performance Tips
+### Table Styling in .docx
 
-- Reuse style definitions across multiple documents
-- Pre-load templates for batch operations
-- Use streaming for very large documents
-- Compress images before embedding
-- Batch file system operations
-- Cache compiled templates when possible
-
-## Advanced Features
-
-**Table of Contents:**
 ```javascript
-new TableOfContents("Table of Contents", {
-  hyperlink: true,
-  headingStyleRange: "1-3"
-});
+new Table({
+  width: { size: 100, type: WidthType.PERCENTAGE },
+  rows: [
+    // Header row
+    new TableRow({
+      children: ["Column A", "Column B", "Column C"].map(text =>
+        new TableCell({
+          children: [new Paragraph({
+            children: [new TextRun({ text, bold: true, color: "FFFFFF", size: 18, font: "Calibri" })]
+          })],
+          shading: { type: ShadingType.SOLID, color: "1A1A2E" },
+          width: { size: 33, type: WidthType.PERCENTAGE }
+        })
+      )
+    }),
+    // Data rows
+    new TableRow({
+      children: ["Value 1", "Value 2", "Value 3"].map(text =>
+        new TableCell({
+          children: [new Paragraph({
+            children: [new TextRun({ text, size: 20, color: "525252" })]
+          })],
+          borders: {
+            bottom: { style: BorderStyle.SINGLE, size: 1, color: "E5E5E5" }
+          }
+        })
+      )
+    })
+  ]
+})
 ```
 
-**Conditional Sections:**
-```javascript
-// In template: {#showSection}Content{/showSection}
-doc.setData({ showSection: condition ? {...} : false });
-```
+## Content Quality Checklist
 
-**Custom Numbering:**
-```javascript
-new Paragraph({
-  text: "Numbered item",
-  numbering: {
-    reference: "custom-numbering",
-    level: 0
-  }
-});
-```
+Before saving any document:
+
+- [ ] Title is specific (not "Document" or "Proposal")
+- [ ] Date is accurate (check TEMPORAL CONTEXT)
+- [ ] No placeholder text remains
+- [ ] Numbers are formatted appropriately
+- [ ] Logical flow: conclusion first, then evidence
+- [ ] Spelling and grammar checked
+- [ ] Author/organization correctly attributed
+
+## What NOT to Do
+
+- Do NOT default to .docx when the user just says "document" (use HTML)
+- Do NOT scaffold a project with package.json for one document
+- Do NOT leave placeholder text in delivered documents
+- Do NOT use pdfkit for documents (that's for the PDF Generator skill)
+- Do NOT create complex class hierarchies for document generation
+- Do NOT ask the user to run scripts (you run them via Bash)

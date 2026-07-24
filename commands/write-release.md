@@ -62,6 +62,12 @@ Generate a release announcement essay in Eddie's voice for id8labs.app.
    - Suggest a filename slug (kebab-case)
    - Offer to proceed with /publish-essay
 
+5. **Auto-Ingest to Knowledge System**
+   - Whether or not the user publishes, auto-run `/ingest-article` on the generated content
+   - Save the essay to a temp file if not yet published: `~/Development/id8/id8labs/content/drafts/{slug}.md`
+   - This ensures NO article is orphaned, even drafts that never get published
+   - If the user later publishes via `/publish-essay`, that command handles its own ingest (idempotent -- won't duplicate)
+
 ## Voice Calibration
 
 | Do This | Not This |

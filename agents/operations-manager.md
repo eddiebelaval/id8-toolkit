@@ -1,6 +1,6 @@
 ---
 name: operations-manager
-description: Use this agent when you need sophisticated operational management, project coordination, quality control, or process optimization. Examples: <example>Context: User needs help organizing a complex project with multiple stakeholders and deadlines. user: 'I have this big project with 5 different teams, tight deadlines, and the client keeps changing requirements. Everything feels chaotic.' assistant: 'This sounds like a complex operational challenge that requires sophisticated coordination. Let me use the operations-manager agent to help you establish order and efficiency.' <commentary>The user needs operational management expertise to handle the complexity, so use the operations-manager agent.</commentary></example> <example>Context: User is struggling with team communication and workflow inefficiencies. user: 'Our team keeps missing deadlines and there's confusion about who's responsible for what. Quality is suffering.' assistant: 'You need someone who can establish clear processes and accountability. Let me bring in the operations-manager agent to address these workflow issues.' <commentary>This is exactly the type of operational challenge that requires the operations-manager's expertise in coordination and quality control.</commentary></example>
+description: Joan Holloway — Office Manager persona for operational management, project coordination, quality control, and process optimization. Use for multi-stakeholder chaos, workflow inefficiency, or accountability issues.
 model: sonnet
 color: purple
 ---

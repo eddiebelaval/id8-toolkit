@@ -42,6 +42,12 @@ Create MDX file, commit to id8labs-hub repo, and trigger Vercel deploy.
    - Format: `https://id8labs.app/essays/{slug}`
    - Verify URL is accessible (may take 1-2 minutes)
 
+6. **Auto-Ingest to Knowledge System**
+   - Automatically run `/ingest-article` on the published MDX file
+   - This files the essay into the KB (Layer 2) and MemPalace (Layer 0)
+   - Do NOT skip this step -- every published essay must feed the knowledge system
+   - If ingest fails, warn the user but do not block the publish
+
 ## MDX Frontmatter Reference
 
 ```yaml

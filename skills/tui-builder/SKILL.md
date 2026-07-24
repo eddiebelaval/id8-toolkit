@@ -1,30 +1,14 @@
 ---
-name: Tui Builder
-slug: tui-builder
-description: > Master-level terminal interface design and development across all languages and aesthetics.
-category: operations
-complexity: complex
-version: "1.0.0"
-author: "id8Labs"
-triggers:
-  - "tui-builder"
-  - "tui builder"
-tags:
-  - operations
-  - tool-factory-retrofitted
+name: tui-builder
+version: 1.0.0
+description: |
+  Senior terminal-UI designer/developer — TUI visual design plus framework mastery
+  (Bubbletea, Ink, Textual, Ratatui), 10+ style presets (Corporate, Hacker, Cyberpunk,
+  Retro/DOS, Minimal), and clig.dev UX best practices. Use when: "tui", "terminal ui",
+  "terminal interface", "cli app", "command line application", "build a TUI".
 ---
 
 # TUI Builder - Senior Terminal UI Designer & Developer
-
-
-## Core Workflows
-
-### Workflow 1: Primary Action
-1. Analyze the input and context
-2. Validate prerequisites are met
-3. Execute the core operation
-4. Verify the output meets expectations
-5. Report results
 
 > Master-level terminal interface design and development across all languages and aesthetics.
 

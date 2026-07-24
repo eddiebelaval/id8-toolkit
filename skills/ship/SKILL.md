@@ -1,7 +1,7 @@
 ---
 name: Ship
 slug: ship
-description: Full delivery pipeline — preflight, commit, push, PR, merge in one command
+description: Full delivery pipeline — preflight, polish, commit, push, PR, merge in one command
 category: operations
 complexity: complex
 version: "1.0.0"
@@ -28,11 +28,12 @@ Stage, commit, push, PR, merge, and verify — end-to-end shipping in one comman
 ### Workflow 1: Full Ship (Default)
 1. Detect context (project, branch, base)
 2. Run preflight checks (typecheck, build, lint, tests)
-3. Stage and commit changes
-4. Push to remote
-5. Create PR
-6. Merge (regular merge, no squash)
-7. Verify merge succeeded
+3. Code quality pass (3 parallel review agents: reuse, quality, efficiency)
+4. Stage and commit changes
+5. Push to remote
+6. Create PR
+7. Merge (regular merge, no squash)
+8. Verify merge succeeded
 
 ## Usage
 
@@ -41,6 +42,7 @@ Stage, commit, push, PR, merge, and verify — end-to-end shipping in one comman
 /ship "feat: add auth flow"    # Ship with explicit commit message
 /ship --no-merge               # Create PR but don't merge (for review)
 /ship --base dev               # Target a specific base branch (default: main)
+/ship --no-polish              # Skip the code quality pass (faster, for trivial changes)
 /ship --dry-run                # Show what would happen without doing anything
 ```
 
@@ -83,6 +85,26 @@ pytest -x -q 2>&1
 - Maximum 2 fix attempts per check — if still failing after 2 fixes, STOP and report
 
 If `--dry-run`: Show preflight results and exit.
+
+### Step 1.5: Code Quality Pass (AUTO)
+
+After preflight passes but BEFORE committing, run an automated quality sweep on the changed files. This catches the issues that tests and type-check miss: duplicate code, missing CSS, broken abstractions, memory leaks, unmemoized hot paths.
+
+1. Get the diff: `git diff HEAD` (or `git diff --cached` if files are staged)
+2. If the diff is trivial (< 20 lines changed, or only config/docs), SKIP this step.
+3. Launch THREE review agents **in parallel** (use the Agent tool), passing each the full diff:
+
+   **Agent 1 (Reuse):** Search for existing utilities/helpers that could replace new code. Flag duplicates, inline logic that could use existing utils, overlapping components.
+
+   **Agent 2 (Quality):** Check for redundant state, copy-paste variations, stringly-typed code, leaky abstractions, missing CSS classes referenced by components, divergent types that should be unified.
+
+   **Agent 3 (Efficiency):** Check for unbounded data structures, missing cleanup, unmemoized computations in render paths, per-request allocations that should be singletons, duplicate filtering.
+
+4. Aggregate findings. Fix each issue directly (skip false positives silently).
+5. If fixes were made, re-run preflight (Step 1) to confirm nothing broke.
+6. Proceed to Step 2.
+
+**Skip conditions:** `--no-polish` flag, or `--dry-run` mode.
 
 ### Step 2: Stage and Commit
 
@@ -145,6 +167,20 @@ EOF
    - Report the failure
    - Do NOT force merge
    - Exit with the PR URL so Eddie can review
+
+### Step 5b: Cortex Decision Capture (after merge)
+
+After a successful merge, record the decision in Cortex so future sessions and other surfaces know what shipped:
+
+1. Use the `mcp__cortex__cortex_write` tool (if available) to write a context object:
+   - **type:** `decision`
+   - **title:** The PR title (e.g., "feat: add auth flow for Parallax")
+   - **body:** 1-2 sentence summary of what was shipped and why. Include the PR URL.
+   - **project:** The detected project name from Step 0
+   - **tags:** `["shipped", "pr-merge"]`
+   - **confidence:** `high`
+
+2. If the MCP tool is not available, skip silently — do not block the ship pipeline.
 
 ### Step 6: Cleanup and Report
 
