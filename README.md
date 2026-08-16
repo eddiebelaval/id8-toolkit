@@ -1,6 +1,6 @@
 # Squire
 
-The most complete Claude Code toolkit in the wild. Battle-tested behavioral rules, 80 slash commands, 346 skills, 35 custom agents, stage-gate pipelines, multi-model orchestration, and reusable thinking frameworks -- distilled from six months of daily AI-augmented development across 104 repositories and a dozen shipped products (19,030 commits, March--August 2026).
+The most complete Claude Code toolkit in the wild. Battle-tested behavioral rules, 80 slash commands, 348 skills, 35 custom agents, stage-gate pipelines, multi-model orchestration, and reusable thinking frameworks -- distilled from six months of daily AI-augmented development across 104 repositories and a dozen shipped products (19,030 commits, March--August 2026).
 
 **19,030 commits across 104 repositories taught us how AI agents fail. This is the operating system that prevents it.**
 
@@ -18,7 +18,7 @@ It's not a product. It's an operating system -- a set of files you drop into you
 |-----------|-------|-------------|
 | [`squire.md`](squire.md) | 1 | The flagship. A complete behavioral ruleset for AI agents -- drop it into your project root or `~/.claude/CLAUDE.md` |
 | [Commands](commands/) | 80 | Claude Code slash commands: `/ship`, `/deploy`, `/research`, `/visualize`, `/blueprint`, `/fix`, `/test`, and 73 more |
-| [Skills](skills/) | 346 | Specialized skills across engineering, marketing, finance, AI/ML, design, and operations |
+| [Skills](skills/) | 348 | Specialized skills across engineering, marketing, finance, AI/ML, design, and operations |
 | [Agents](agents/) | 35 | Custom agents with tool access for architecture, security, DevOps, and more |
 | [Pipeline](pipeline/) | 11 stages | Stage-gate build system with gate questions, agent-native additions, and branch hygiene |
 | [Patterns](patterns/) | 7 | Battle-tested behavioral rules and multi-model orchestration (Director/Builder) |
@@ -361,7 +361,7 @@ Verifiable and reproducible: commit counts are the sum of default-branch commits
 | Repositories | 104 |
 | Commits (default branch) | 19,030 |
 | Products shipped | 12+ |
-| Skills | 346 |
+| Skills | 348 |
 | Slash commands | 80 |
 | Custom agents | 35 |
 | Timeframe | March--August 2026 |

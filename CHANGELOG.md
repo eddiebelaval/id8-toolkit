@@ -4,6 +4,19 @@ All notable changes to Squire are recorded here. Squire has no build artifact, s
 release is a tagged commit plus an entry in this file. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); dates are ISO (YYYY-MM-DD).
 
+## [0.2.1] - 2026-08-16
+
+### Added
+- **2 skills** (346 -> 348): `retro` (portable engineering-retrospective scanner,
+  auto-detects git identity) and `epistemic-matrix` (Rumsfeld four-quadrant blind-spot
+  audit). Both cleared the leak scan; `epistemic-matrix` had one proper noun genericized.
+
+### Held (not published, by design)
+- `learning-loop` and the `sell-*` family were evaluated for inclusion and **withheld**:
+  their substance is client-confidential (named deals, deal sizes, client internal
+  politics, partners). Genericizing them would leave a hollow shell and still risk
+  outing clients, so they stay private.
+
 ## [0.2.0] - 2026-08-16
 
 Growth refresh. Six months of daily use since the initial release, curated for public
