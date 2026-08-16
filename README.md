@@ -1,8 +1,8 @@
 # Squire
 
-The most complete Claude Code toolkit in the wild. Battle-tested behavioral rules, 63 slash commands, 327 skills, 34 custom agents, stage-gate pipelines, multi-model orchestration, and reusable thinking frameworks -- all derived from 2,990 sessions and 3,307 commits across 5 months of intensive AI-augmented development.
+The most complete Claude Code toolkit in the wild. Battle-tested behavioral rules, 80 slash commands, 346 skills, 35 custom agents, stage-gate pipelines, multi-model orchestration, and reusable thinking frameworks -- distilled from six months of daily AI-augmented development across 104 repositories and a dozen shipped products (19,030 commits, March--August 2026).
 
-**3,307 commits taught us how AI agents fail. This is the operating system that prevents it.**
+**19,030 commits across 104 repositories taught us how AI agents fail. This is the operating system that prevents it.**
 
 ---
 
@@ -17,9 +17,9 @@ It's not a product. It's an operating system -- a set of files you drop into you
 | Component | Count | What It Does |
 |-----------|-------|-------------|
 | [`squire.md`](squire.md) | 1 | The flagship. A complete behavioral ruleset for AI agents -- drop it into your project root or `~/.claude/CLAUDE.md` |
-| [Commands](commands/) | 63 | Claude Code slash commands: `/ship`, `/deploy`, `/research`, `/visualize`, `/blueprint`, `/fix`, `/test`, and 56 more |
-| [Skills](skills/) | 327 | Specialized skills across engineering, marketing, finance, AI/ML, design, and operations |
-| [Agents](agents/) | 34 | Custom agents with tool access for architecture, security, DevOps, and more |
+| [Commands](commands/) | 80 | Claude Code slash commands: `/ship`, `/deploy`, `/research`, `/visualize`, `/blueprint`, `/fix`, `/test`, and 73 more |
+| [Skills](skills/) | 346 | Specialized skills across engineering, marketing, finance, AI/ML, design, and operations |
+| [Agents](agents/) | 35 | Custom agents with tool access for architecture, security, DevOps, and more |
 | [Pipeline](pipeline/) | 11 stages | Stage-gate build system with gate questions, agent-native additions, and branch hygiene |
 | [Patterns](patterns/) | 7 | Battle-tested behavioral rules and multi-model orchestration (Director/Builder) |
 | [Prompts](prompts/) | 6 | Thinking frameworks for code review, debugging, security, performance, testing, and ship readiness |
@@ -350,18 +350,22 @@ All HTML visualizations follow the **Factory-inspired** design language:
 
 ## Origin
 
-This toolkit was built by [Eddie Belaval](https://x.com/eddiebe) at [id8Labs](https://id8labs.app) while shipping 12+ AI-augmented products with Claude Code over 5 months. Every rule, pattern, and template came from real friction -- sessions where something went wrong, and the fix was documented so it wouldn't happen again.
+This toolkit was built by [Eddie Belaval](https://x.com/eddiebe) at [id8Labs](https://id8labs.app) while shipping 12+ AI-augmented products with Claude Code over six months (March--August 2026). Every rule, pattern, and template came from real friction -- sessions where something went wrong, and the fix was documented so it wouldn't happen again.
 
 ### The Numbers
 
+Verifiable and reproducible: commit counts are the sum of default-branch commits across the repositories in the development tree; the v1 rules corpus is the analyzed session set at first release.
+
 | Metric | Count |
 |--------|-------|
-| Sessions | 2,990 |
-| Commits | 3,307 |
+| Repositories | 104 |
+| Commits (default branch) | 19,030 |
 | Products shipped | 12+ |
-| Skills built | 327 |
-| Slash commands | 63 |
-| Custom agents | 34 |
+| Skills | 346 |
+| Slash commands | 80 |
+| Custom agents | 35 |
+| Timeframe | March--August 2026 |
+| v1 rules corpus | ~3,000 sessions analyzed (Mar 2026) |
 | Duration | 5 months (Oct 2025 - Mar 2026) |
 
 ```

@@ -1,7 +1,7 @@
 # Squire -- Agent Operating System
 
 > Drop this file into your project root or `~/.claude/` to give your AI agent a behavioral operating system.
-> Derived from 2,990 sessions, 3,307 commits, and 12 shipped products across 5 months.
+> Distilled from six months of daily use: 19,030 commits across 104 repositories and a dozen shipped products (March--August 2026). Behavioral rules v1 were mined from ~3,000 analyzed sessions.
 > Customize the sections below for your workflow. Delete what you don't need.
 
 ---
@@ -18,7 +18,7 @@
 
 ## Behavioral Rules
 
-These rules are derived from analyzing 1,075 real AI-assisted development sessions across 3,667 commits. They address the most common failure modes -- the patterns where agents waste time, introduce bugs, or frustrate developers.
+These rules are derived from analyzing thousands of real AI-assisted development sessions across 19,030 commits and 104 repositories. They address the most common failure modes -- the patterns where agents waste time, introduce bugs, or frustrate developers.
 
 ### 1. Default to Implementation
 
